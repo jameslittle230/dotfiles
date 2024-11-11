@@ -1,11 +1,18 @@
--- Reload neovim config when this file changes
-vim.cmd([[
-  augroup AutoReloadConfig
-    autocmd!
-    autocmd BufWritePost ~/Code/dotfiles/home/.config/nvim/init.lua execute '!cd ~/Code/dotfiles && ./init.sh' | execute 'source ~/.config/nvim/init.lua' | echom "Ran init.sh and reloaded config"
+-- Reload neovim when the dotfiles file is saved
+-- Yes, this doesn't work with lazy.nvim, but I still like having the behavior
+local function reload_config()
+    vim.fn.system('cd ~/Code/dotfiles && ./init.sh')
+    vim.cmd('source ~/.config/nvim/init.lua')
+    vim.notify("Ran init.sh and reloaded config", vim.log.levels.INFO)
+end
 
-  augroup END
-]])
+vim.api.nvim_create_autocmd("BufWritePost", {
+    pattern = vim.fn.expand("~/Code/dotfiles/home/.config/nvim/init.lua"),
+    callback = reload_config,
+    group = vim.api.nvim_create_augroup("AutoReloadConfig", { clear = true }),
+    desc = "Reload Neovim config and run init script when init.lua is saved"
+})
+
 -- General settings
 vim.opt.backspace = 'indent,eol,start'  -- Allow backspace in insert mode
 vim.opt.history = 1000                  -- Store lots of command line history
@@ -37,6 +44,16 @@ vim.opt.shiftwidth = 2                 -- Size of an indent
 vim.opt.softtabstop = 2                -- Number of spaces tabs count for in insert mode
 vim.opt.autoindent = true              -- Copy indent from current line when starting new line
 
+-- Color column
+vim.opt.colorcolumn = table.concat(vim.fn.range(81,999), ',')
+vim.opt.colorcolumn = "80," .. table.concat(vim.fn.range(120,999), ',')
+vim.api.nvim_create_autocmd("ColorScheme", {
+    pattern = "*",
+    callback = function()
+        vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#1F1B21" })
+    end
+})
+
 -- Remaps
 vim.g.mapleader = ','
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, desc = 'Exit insert mode with jk' })
@@ -58,7 +75,7 @@ map('n', '<Leader>fn', ':NvimTreeFindFile<CR>', opts)  -- Find current file in t
 -- Telescope keybindings
 -- File pickers
 map('n', '<Leader>ff', ':Telescope find_files<CR>', opts)
-map('n', '<Leader>fg', ':Telescope live_grep<CR>', opts)
+map('n', '<Leader>fl', ':Telescope live_grep<CR>', opts)
 map('n', '<Leader>fb', ':Telescope buffers<CR>', opts)
 map('n', '<Leader>fh', ':Telescope help_tags<CR>', opts)
 
@@ -133,6 +150,19 @@ require("lazy").setup({
           },
         }
       end,
+    },
+    {
+      'windwp/nvim-autopairs',
+      event = "InsertEnter",
+      config = true
+      -- use opts = {} for passing setup options
+      -- this is equivalent to setup({}) function
+    },
+    {
+      'numToStr/Comment.nvim',
+      opts = {
+          -- add any options here
+      }
     },
     {
       'nvim-telescope/telescope.nvim',

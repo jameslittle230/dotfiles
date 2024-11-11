@@ -9,6 +9,7 @@ set -U fish_greeting "Welcome to Fish. 🐟"
 
 abbr -a vim nvim
 abbr -a cd z
+abbr -a ls eza -a
 abbr -a c code --new-window .
 
 function mux
