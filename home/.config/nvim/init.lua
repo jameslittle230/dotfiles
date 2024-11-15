@@ -1,94 +1,4 @@
--- Reload neovim when the dotfiles file is saved
--- Yes, this doesn't work with lazy.nvim, but I still like having the behavior
-local function reload_config()
-    vim.fn.system('cd ~/Code/dotfiles && ./init.sh')
-    vim.cmd('source ~/.config/nvim/init.lua')
-    vim.notify("Ran init.sh and reloaded config", vim.log.levels.INFO)
-end
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-    pattern = vim.fn.expand("~/Code/dotfiles/home/.config/nvim/init.lua"),
-    callback = reload_config,
-    group = vim.api.nvim_create_augroup("AutoReloadConfig", { clear = true }),
-    desc = "Reload Neovim config and run init script when init.lua is saved"
-})
-
--- General settings
-vim.opt.backspace = 'indent,eol,start'  -- Allow backspace in insert mode
-vim.opt.history = 1000                  -- Store lots of command line history
-vim.opt.showcmd = true                  -- Show incomplete commands down the bottom
-vim.opt.showmode = true                 -- Show current mode down the bottom
-vim.opt.guicursor = 'a:blinkon0'        -- Disable cursor blink
-vim.opt.visualbell = true               -- No sounds
-vim.opt.autoread = true                 -- Reload files changed outside vim
-vim.opt.ruler = true                    -- Show ruler
-vim.opt.undolevels = 1000               -- Undo levels
-vim.opt.laststatus = 2                  -- Fix status bar
-
--- Some recommended modern settings
-vim.opt.number = true                   -- Show line numbers
-vim.opt.relativenumber = true           -- Show relative line numbers
-vim.opt.termguicolors = true            -- Enable 24-bit RGB colors
-vim.opt.scrolloff = 8                   -- Keep 8 lines above/below cursor when scrolling
-vim.opt.signcolumn = 'yes'              -- Always show sign column
-vim.opt.updatetime = 50                 -- Faster completion
-vim.opt.clipboard = 'unnamedplus'       -- Use system clipboard
-
--- Search settings
-vim.opt.ignorecase = true              -- Ignore case when searching
-vim.opt.smartcase = true               -- Unless we type a capital
-
--- Indentation settings
-vim.opt.expandtab = true               -- Use spaces instead of tabs
-vim.opt.shiftwidth = 2                 -- Size of an indent
-vim.opt.softtabstop = 2                -- Number of spaces tabs count for in insert mode
-vim.opt.autoindent = true              -- Copy indent from current line when starting new line
-
--- Color column
-vim.opt.colorcolumn = table.concat(vim.fn.range(81,999), ',')
-vim.opt.colorcolumn = "80," .. table.concat(vim.fn.range(120,999), ',')
-vim.api.nvim_create_autocmd("ColorScheme", {
-    pattern = "*",
-    callback = function()
-        vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#1F1B21" })
-    end
-})
-
--- Remaps
-vim.g.mapleader = ','
-vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, desc = 'Exit insert mode with jk' })
-vim.keymap.set('n', 'j', 'gj')
-vim.keymap.set('n', 'k', 'gk')
-
-local map = vim.api.nvim_set_keymap
-local opts = { noremap = true, silent = true }
-
--- nvim-tree keybindings
--- Main toggles
-map('n', '<Leader>e', ':NvimTreeToggle<CR>', opts)
-map('n', '<Leader>fe', ':NvimTreeFocus<CR>', opts)
-
--- File operations in nvim-tree
-map('n', '<Leader>fr', ':NvimTreeRefresh<CR>', opts)
-map('n', '<Leader>fn', ':NvimTreeFindFile<CR>', opts)  -- Find current file in tree
-
--- Telescope keybindings
--- File pickers
-map('n', '<Leader>ff', ':Telescope find_files<CR>', opts)
-map('n', '<Leader>fl', ':Telescope live_grep<CR>', opts)
-map('n', '<Leader>fb', ':Telescope buffers<CR>', opts)
-map('n', '<Leader>fh', ':Telescope help_tags<CR>', opts)
-
--- Git pickers
-map('n', '<Leader>gc', ':Telescope git_commits<CR>', opts)
-map('n', '<Leader>gb', ':Telescope git_branches<CR>', opts)
-map('n', '<Leader>gs', ':Telescope git_status<CR>', opts)
-
-
-
-
-
-
+require("jil")
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -256,3 +166,43 @@ vim.api.nvim_create_autocmd({"VimEnter"}, {
 })
 
 vim.cmd.colorscheme("default")
+
+-- Function to create a floating terminal
+local function open_floating_terminal()
+    -- Get editor dimensions
+    local columns = vim.o.columns
+    local lines = vim.o.lines
+    
+    -- Calculate floating window size
+    local width = math.floor(columns * 0.6)
+    local height = math.floor(lines * 0.6)
+    
+    -- Calculate starting position
+    local col = math.floor((columns - width) / 2)
+    local row = math.floor((lines - height) / 2)
+    
+    -- Set window options
+    local opts = {
+        relative = 'editor',
+        row = row,
+        col = col,
+        width = width,
+        height = height,
+        style = 'minimal',
+        border = 'rounded'
+    }
+    
+    -- Create buffer and window
+    local buf = vim.api.nvim_create_buf(false, true)
+    local win = vim.api.nvim_open_win(buf, true, opts)
+    
+    -- Open terminal in the buffer
+    vim.cmd('terminal')
+    vim.cmd('startinsert')
+end
+
+-- Set up the keybinding (Ctrl+t)
+vim.keymap.set('n', '<C-t>', open_floating_terminal, { noremap = true, silent = true })
+
+-- Optional: Easy escape from terminal mode
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true })
