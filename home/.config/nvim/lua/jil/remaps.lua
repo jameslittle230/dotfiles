@@ -32,4 +32,4 @@ map('n', '<Leader>gc', ':Telescope git_commits<CR>', opts)
 map('n', '<Leader>gb', ':Telescope git_branches<CR>', opts)
 map('n', '<Leader>gs', ':Telescope git_status<CR>', opts)
 
--- Floating terminal
+vim.keymap.set('n', '<leader>b', ':NvimTreeToggle<CR>', { silent = true, noremap = true })

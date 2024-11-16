@@ -89,7 +89,32 @@ return {
           function(server_name)
             require('lspconfig')[server_name].setup({})
           end,
+
+          ["denols"] = function()
+            require('lspconfig').denols.setup({
+              root_dir = require('lspconfig').util.root_pattern("deno.json", "deno.jsonc"),
+              init_options = {
+                enable = true,
+                lint = true,
+                unstable = true,
+                suggest = {
+                  imports = {
+                    hosts = {
+                      ["https://deno.land"] = true,
+                      ["https://cdn.nest.land"] = true,
+                      ["https://crux.land"] = true
+                    }
+                  }
+                }
+              }
+            })
+          end
         }
+      })
+
+      require('lspconfig').ts_ls.setup({
+        root_dir = require('lspconfig').util.root_pattern("package.json"),
+        single_file_support = false
       })
 
       local buffer_autoformat = function(bufnr)

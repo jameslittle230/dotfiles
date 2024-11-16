@@ -7,13 +7,6 @@ return {
     end
   },
   {
-    'navarasu/onedark.nvim',
-    version = "*",
-    config = function()
-      require('onedark').setup({})
-    end
-  },
-  {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
     config = true
