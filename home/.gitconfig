@@ -74,3 +74,4 @@
 
 [delta]
   navigate = true
+  side-by-side = true
