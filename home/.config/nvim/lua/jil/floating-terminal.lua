@@ -37,3 +37,4 @@ vim.keymap.set('n', '<C-t>', open_floating_terminal, { noremap = true, silent = 
 
 -- Easy escape from terminal mode
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true })
+vim.keymap.set('t', '<Leader><Esc>', '<C-\\><C-n>:q', { noremap = true, silent = true })

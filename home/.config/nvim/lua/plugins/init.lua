@@ -7,6 +7,20 @@ return {
     end
   },
   {
+    "tpope/vim-surround",
+    -- Load the plugin immediately since it provides keymaps
+    event = "VeryLazy",
+  },
+  {
+    "EdenEast/nightfox.nvim",
+    config = function()
+      require('nightfox').setup({
+        style = 'cool',
+      })
+      vim.cmd.colorscheme('nightfox')
+    end
+  },
+  {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
     config = true

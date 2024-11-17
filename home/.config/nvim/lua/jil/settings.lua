@@ -33,6 +33,6 @@ vim.opt.colorcolumn = "80," .. table.concat(vim.fn.range(120, 999), ',')
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()
-    vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#2b2229" })
+    vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#222833" })
   end
 })

@@ -5,6 +5,26 @@ return {
     opts = {},
   },
 
+  {
+    'nvim-lua/lsp-status.nvim',
+    config = function()
+      local lsp_status = require('lsp-status')
+
+      -- Configure to use ASCII symbols only
+      lsp_status.config({
+        indicator_errors = 'E',
+        indicator_warnings = 'W',
+        indicator_info = 'I',
+        indicator_hint = 'H',
+        indicator_ok = 'OK',
+        spinner_frames = { '-', '\\', '|', '/' },
+        status_symbol = ' LSP',
+        component_separator = ' | ',
+        indicator_separator = ' ',
+      })
+    end
+  },
+
   -- Autocompletion
   {
     'hrsh7th/nvim-cmp',
@@ -17,7 +37,7 @@ return {
           { name = 'nvim_lsp' },
         },
         mapping = cmp.mapping.preset.insert({
-          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<Tab>'] = cmp.mapping.complete(),
           ['<C-u>'] = cmp.mapping.scroll_docs(-4),
           ['<C-d>'] = cmp.mapping.scroll_docs(4),
           ['<CR>'] = cmp.mapping.confirm({ select = true }),
@@ -75,9 +95,9 @@ return {
           vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
           vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
           vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-          vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-          vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-          vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+          vim.keymap.set('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+          vim.keymap.set({ 'n', 'x' }, '<leader>f', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+          vim.keymap.set('n', '<leader>a', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
         end,
       })
 
