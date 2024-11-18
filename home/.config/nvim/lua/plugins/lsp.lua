@@ -57,6 +57,10 @@ return {
 
   -- LSP
   {
+    "nvimtools/none-ls.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" }
+  },
+  {
     'neovim/nvim-lspconfig',
     cmd = { 'LspInfo', 'LspInstall', 'LspStart' },
     event = { 'BufReadPre', 'BufNewFile' },
@@ -64,6 +68,7 @@ return {
       { 'hrsh7th/cmp-nvim-lsp' },
       { 'williamboman/mason.nvim' },
       { 'williamboman/mason-lspconfig.nvim' },
+      { 'nvimtools/none-ls.nvim' }
     },
     init = function()
       -- Reserve a space in the gutter
@@ -133,8 +138,6 @@ return {
       })
 
       require('lspconfig').ts_ls.setup({
-        root_dir = require('lspconfig').util.root_pattern("package.json"),
-        single_file_support = false
       })
 
       local buffer_autoformat = function(bufnr)
@@ -152,6 +155,56 @@ return {
           end,
         })
       end
+
+      local function has_prettier()
+        local root_dir = vim.fn.getcwd()
+        local package_json = root_dir .. "/package.json"
+        local node_modules = root_dir .. "/node_modules/.bin/prettier"
+
+        -- Check if prettier is in dependencies or devDependencies
+        if vim.fn.filereadable(package_json) == 1 then
+          local content = vim.fn.readfile(package_json)
+          local json = vim.fn.json_decode(table.concat(content))
+          if json.dependencies and json.dependencies.prettier then
+            return true
+          end
+          if json.devDependencies and json.devDependencies.prettier then
+            return true
+          end
+        end
+
+        -- Check if prettier is installed in node_modules
+        return vim.fn.executable(node_modules) == 1
+      end
+
+      -- Configure null-ls for prettier
+      local null_ls = require("null-ls")
+      null_ls.setup({
+        sources = {
+          null_ls.builtins.formatting.prettier.with({
+            condition = function()
+              return has_prettier()
+            end,
+            prefer_local = "node_modules/.bin",
+          }),
+        },
+      })
+
+      -- Setup typescript LSP
+      require('lspconfig').ts_ls.setup({
+        on_attach = function(client, bufnr)
+          -- Disable tsserver formatting if prettier is available
+          if has_prettier() then
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+          end
+
+          -- Your existing keymaps and other on_attach logic here
+        end,
+        -- Your other tsserver settings here
+        root_dir = require('lspconfig').util.root_pattern("package.json"),
+        single_file_support = false
+      })
 
       vim.api.nvim_create_autocmd('LspAttach', {
         callback = function(event)
