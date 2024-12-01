@@ -17,6 +17,7 @@ brew install ripgrep
 brew install starship
 brew install tailscale
 brew install tmux
+brew install typst
 brew install wget
 brew install yt-dlp
 brew install zoxide
