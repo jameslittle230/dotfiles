@@ -15,6 +15,7 @@ return {
           "javascript",
           "typescript",
           "rust",
+          "ruby",
           "go",
           "html",
           "css",
@@ -23,14 +24,12 @@ return {
           "markdown",
           "bash",
           "vim",
-          "help",
           "tsx",
+          "toml"
         },
 
-        -- Install parsers synchronously (only applied to `ensure_installed`)
+        ignore_install = { "help" },
         sync_install = false,
-
-        -- Automatically install missing parsers when entering buffer
         auto_install = true,
 
         highlight = {

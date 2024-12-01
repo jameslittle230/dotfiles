@@ -7,9 +7,14 @@ return {
     end
   },
   {
-    "tpope/vim-surround",
+    "kylechui/nvim-surround",
     -- Load the plugin immediately since it provides keymaps
     event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup({
+        -- Configuration here, or leave empty to use defaults
+      })
+    end
   },
   {
     "EdenEast/nightfox.nvim",
@@ -24,27 +29,15 @@ return {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
     config = true
-    -- use opts = {} for passing setup options
-    -- this is equivalent to setup({}) function
   },
   {
     'numToStr/Comment.nvim',
-    opts = {
-      -- add any options here
-    }
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
+    "ggandor/leap.nvim",
+    event = "VeryLazy",
     config = function()
-      local configs = require("nvim-treesitter.configs")
-
-      configs.setup({
-        ensure_installed = { "c", "lua", "vim", "vimdoc", "javascript", "html" },
-        sync_install = false,
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
+      vim.keymap.set('n', 's', '<Plug>(leap)')
     end
-  }
+  },
 }
