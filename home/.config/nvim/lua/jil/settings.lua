@@ -36,3 +36,14 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#222833" })
   end
 })
+
+-- Markdown word wrap
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true     -- Wrap at word boundaries
+    vim.opt_local.textwidth = 0        -- Prevents hard wrapping
+    vim.opt_local.wrapmargin = 0       -- Prevents automatic hard wrapping
+  end
+})
