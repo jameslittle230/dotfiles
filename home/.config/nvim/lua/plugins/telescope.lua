@@ -1,6 +1,3 @@
-local telescope = require('telescope.actions')
-local nvim_tree_api = require('nvim-tree.api')
-
 return {
   'nvim-telescope/telescope.nvim',
   tag = '0.1.8',
@@ -8,6 +5,8 @@ return {
     'nvim-lua/plenary.nvim'
   },
   config = function()
+    local telescope = require('telescope.actions')
+    local nvim_tree_api = require('nvim-tree.api')
     require('telescope').setup({
       defaults = {
         -- Enable recursive search by default
