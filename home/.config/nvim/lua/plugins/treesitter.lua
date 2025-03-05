@@ -44,10 +44,10 @@ return {
         incremental_selection = {
           enable = true,
           keymaps = {
-            init_selection = "vv", -- set to `false` to disable one of the mappings
-            node_incremental = ">",
-            scope_incremental = false,
-            node_decremental = "<",
+            init_selection = '<CR>',
+            scope_incremental = '<CR>',
+            node_incremental = '<TAB>',
+            node_decremental = '<S-TAB>',
           },
         },
 

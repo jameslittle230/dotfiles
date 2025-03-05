@@ -8,6 +8,7 @@ end
 local telescope = require('telescope.builtin')
 local nvimtree = require('nvim-tree.api')
 local gitsigns = require('gitsigns')
+local lazy = require('lazy')
 
 map('i', 'jk', '<Esc>')
 map('n', 'j', 'gj')
@@ -114,6 +115,7 @@ map('n', ',<space>b', function() telescope.buffers() end, { desc = "Find buffer"
 map('n', ',<space>e', function() nvimtree.tree.toggle() end, { desc = "Toggle explorer" })
 map('n', ',<space>d', function() telescope.diagnostics() end, { desc = "Search diagnostics" })
 map('n', ',<space>s', function() telescope.lsp_document_symbols() end, { desc = "Search symbols" })
+map('n', ',<space>v', function() lazy.update() end, { desc = "Update lazy.nvim" })
 
 -- Diagnostics
 map('n', ',dd', vim.diagnostic.open_float, { desc = "Line diagnostics" })
