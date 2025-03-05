@@ -4,6 +4,12 @@
   excludesfile = ~/.gitignore
   pager = delta
 
+[column]
+  ui = auto
+
+[branch]
+  sort = -committerdate
+
 [commit]
   template = ~/.git-commit-template
 
@@ -11,8 +17,22 @@
   ff = only
   rebase = true
 
+[rebase]
+  autoSquash = true
+  autoStash = true
+  updateRefs = true
+
 [push]
   default = current
+  autoSetupRemote = true
+  followTags = true
+
+[fetch]
+  prune = true
+  pruneTags = true
+
+[commit]
+  verbose = true
 
 [alias]
   a = add
@@ -55,9 +75,11 @@
   mnemonicprefix = true
   algorithm = patience
   compactionHeuristic = true
+  renames = true
 
 [rerere]
   enabled = true
+  autoupdate = true
 
 [help]
   autocorrect = 1
