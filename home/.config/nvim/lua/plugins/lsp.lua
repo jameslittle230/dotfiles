@@ -22,6 +22,8 @@ return {
         component_separator = ' | ',
         indicator_separator = ' ',
       })
+
+      lsp_status.register_progress()
     end
   },
 
@@ -96,7 +98,11 @@ return {
       })
 
       require('mason-lspconfig').setup({
-        ensure_installed = {},
+        ensure_installed = {
+          "lua_ls",
+          "ts_ls",
+          "eslint"
+        },
         handlers = {
           -- this first function is the "default handler"
           -- it applies to every language server without a "custom handler"
@@ -134,15 +140,19 @@ return {
         vim.api.nvim_create_augroup(group, { clear = false })
         vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
 
-        vim.api.nvim_create_autocmd('BufWritePre', {
-          buffer = bufnr,
-          group = group,
-          desc = 'LSP format on save',
-          callback = function()
-            -- note: do not enable async formatting
-            vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
-          end,
-        })
+        local filetype = vim.bo[bufnr].filetype
+
+        if filetype ~= 'yaml' and filetype ~= 'yml' then
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            group = group,
+            desc = 'LSP format on save',
+            callback = function()
+              -- note: do not enable async formatting
+              vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
+            end,
+          })
+        end
       end
 
       local function has_prettier()

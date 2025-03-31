@@ -23,16 +23,22 @@ return {
       })
     end
   },
-  { 'numToStr/Comment.nvim', },
-  { "ggandor/leap.nvim",         event = "VeryLazy" },
-  { "folke/snacks.nvim" },
-  { "tronikelis/ts-autotag.nvim" },
-  { "chentoast/marks.nvim",      event = "VeryLazy", opts = {} },
+  { "ggandor/leap.nvim",          event = "VeryLazy" },
+  { "tronikelis/ts-autotag.nvim", opts = {} },
+  { "chentoast/marks.nvim",       event = "VeryLazy", opts = {} },
+  { 'echasnovski/mini.tabline',   lazy = false,       opts = {} },
+
   {
-    'echasnovski/mini.tabline',
-    version = '*',
-    config = function()
-      require('mini.tabline').setup()
-    end
+    "rcarriga/nvim-notify",
+    opts = {
+      stages = "fade",
+      render = "minimal",
+      top_down = false,
+    },
+    config = function(_, opts)
+      local notify = require("notify")
+      notify.setup(opts)
+      vim.notify = notify
+    end,
   },
 }

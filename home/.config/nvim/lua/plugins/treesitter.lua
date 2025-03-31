@@ -1,5 +1,24 @@
 return {
   {
+    'aaronik/treewalker.nvim',
+
+    -- The following options are the defaults.
+    -- Treewalker aims for sane defaults, so these are each individually optional,
+    -- and setup() does not need to be called, so the whole opts block is optional as well.
+    opts = {
+      -- Whether to briefly highlight the node after jumping to it
+      highlight = true,
+
+      -- How long should above highlight last (in ms)
+      highlight_duration = 250,
+
+      -- The color of the above highlight. Must be a valid vim highlight group.
+      -- (see :h highlight-group for options)
+      highlight_group = 'CursorLine',
+    }
+  },
+
+  {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
@@ -8,14 +27,13 @@ return {
     },
     config = function()
       require("nvim-treesitter.configs").setup({
-        -- a list of parser names, or "all" (supported parsers can be found at https://tree-sitter.github.io/tree-sitter/)
+        -- A list of parser names, or "all" (supported parsers can be found at https://tree-sitter.github.io/tree-sitter/)
         ensure_installed = {
           "lua",
           "python",
           "javascript",
           "typescript",
           "rust",
-          "ruby",
           "go",
           "html",
           "css",
@@ -24,7 +42,9 @@ return {
           "markdown",
           "bash",
           "vim",
+          "vimdoc",
           "tsx",
+          "ruby",
           "toml"
         },
 
@@ -34,13 +54,13 @@ return {
 
         highlight = {
           enable = true,
-          -- setting this to true will run `:h syntax` and tree-sitter at the same time.
+          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
           additional_vim_regex_highlighting = false,
         },
 
         indent = { enable = true },
 
-        -- optional: enable incremental selection
+        -- Optional: Enable incremental selection
         incremental_selection = {
           enable = true,
           keymaps = {
@@ -51,29 +71,26 @@ return {
           },
         },
 
-        -- optional: enable text objects
+        -- Optional: Enable text objects
         textobjects = {
           move = {
             enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
+            set_jumps = true,
             goto_next_start = {
               ["]f"] = { query = "@call.outer", desc = "next function call start" },
               ["]m"] = { query = "@function.outer", desc = "next method/function def start" },
               ["]c"] = { query = "@class.outer", desc = "next class start" },
               ["]i"] = { query = "@conditional.outer", desc = "next conditional start" },
               ["]l"] = { query = "@loop.outer", desc = "next loop start" },
-
-              -- you can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
-              -- below example nvim-treesitter's `locals.scm` and `folds.scm`. they also provide highlights.scm and indent.scm.
               ["]s"] = { query = "@scope", query_group = "locals", desc = "next scope" },
               ["]z"] = { query = "@fold", query_group = "folds", desc = "next fold" },
             },
             goto_next_end = {
-              ["]f"] = { query = "@call.outer", desc = "next function call end" },
-              ["]m"] = { query = "@function.outer", desc = "next method/function def end" },
-              ["]c"] = { query = "@class.outer", desc = "next class end" },
-              ["]i"] = { query = "@conditional.outer", desc = "next conditional end" },
-              ["]l"] = { query = "@loop.outer", desc = "next loop end" },
+              ["]F"] = { query = "@call.outer", desc = "next function call end" },
+              ["]M"] = { query = "@function.outer", desc = "next method/function def end" },
+              ["]C"] = { query = "@class.outer", desc = "next class end" },
+              ["]I"] = { query = "@conditional.outer", desc = "next conditional end" },
+              ["]L"] = { query = "@loop.outer", desc = "next loop end" },
             },
             goto_previous_start = {
               ["[f"] = { query = "@call.outer", desc = "prev function call start" },
@@ -83,11 +100,11 @@ return {
               ["[l"] = { query = "@loop.outer", desc = "prev loop start" },
             },
             goto_previous_end = {
-              ["[f"] = { query = "@call.outer", desc = "prev function call end" },
-              ["[m"] = { query = "@function.outer", desc = "prev method/function def end" },
-              ["[c"] = { query = "@class.outer", desc = "prev class end" },
-              ["[i"] = { query = "@conditional.outer", desc = "prev conditional end" },
-              ["[l"] = { query = "@loop.outer", desc = "prev loop end" },
+              ["[F"] = { query = "@call.outer", desc = "prev function call end" },
+              ["[M"] = { query = "@function.outer", desc = "prev method/function def end" },
+              ["[C"] = { query = "@class.outer", desc = "prev class end" },
+              ["[I"] = { query = "@conditional.outer", desc = "prev conditional end" },
+              ["[L"] = { query = "@loop.outer", desc = "prev loop end" },
             },
           },
 

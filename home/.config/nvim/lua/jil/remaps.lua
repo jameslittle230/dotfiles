@@ -40,7 +40,6 @@ map('n', 'gt', vim.lsp.buf.type_definition, { desc = "Go to type definition" })
 
 -- Standard operations
 map('n', 'K', vim.lsp.buf.hover, { desc = "Show hover" })
-map('n', '<C-k>', vim.lsp.buf.signature_help, { desc = "Show signature" })
 map('n', 'gcc', function() require('Comment.api').toggle.linewise.current() end, { desc = "Toggle comment" })
 
 -- Telescope/Search (,s prefix)

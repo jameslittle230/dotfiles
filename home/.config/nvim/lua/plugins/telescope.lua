@@ -5,8 +5,6 @@ return {
     'nvim-lua/plenary.nvim'
   },
   config = function()
-    local telescope = require('telescope.actions')
-    local nvim_tree_api = require('nvim-tree.api')
     require('telescope').setup({
       defaults = {
         -- Enable recursive search by default
@@ -37,20 +35,6 @@ return {
 
         -- Make path display shorter
         path_display = { "truncate" },
-
-        mappings = {
-          i = {
-            ['<CR>'] = function(bufnr)
-              telescope.select_default(bufnr)
-              vim.defer_fn(function()
-                nvim_tree_api.tree.find_file({
-                  open = true,
-                  focus = false
-                })
-              end, 100)
-            end
-          }
-        }
       },
       pickers = {
         find_files = {
