@@ -11,9 +11,6 @@ local gitsigns = require('gitsigns')
 local lazy = require('lazy')
 
 map('i', 'jk', '<Esc>')
-map('n', 'j', 'gj')
-map('n', 'k', 'gk')
-
 map('n', 's', '<Plug>(leap)')
 
 -- Split Navigation
@@ -24,8 +21,8 @@ map('n', '<C-l>', '<C-w>l')
 
 -- Core Vim-style mappings
 -- Navigation
-map('n', ']d', vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-map('n', '[d', vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+map('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = "Next diagnostic" })
+map('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = "Previous diagnostic" })
 map('n', ']g', function() gitsigns.next_hunk() end, { desc = "Next git hunk" })
 map('n', '[g', function() gitsigns.prev_hunk() end, { desc = "Previous git hunk" })
 map('n', ']b', ':bnext<CR>', { desc = "Next buffer" })
@@ -119,21 +116,12 @@ map('n', ',<space>v', function() lazy.update() end, { desc = "Update lazy.nvim" 
 -- Diagnostics
 map('n', ',dd', vim.diagnostic.open_float, { desc = "Line diagnostics" })
 map('n', ',dw', function() telescope.diagnostics() end, { desc = "Workspace diagnostics" })
-map('n', ',dl', ':TroubleToggle<CR>', { desc = "Toggle trouble list" })
 
+-- j/k
+vim.keymap.set('n', 'k', function()
+  return vim.v.count and "m'" .. vim.v.count .. "k" or "gk"
+end, { expr = true })
 
-
-
-
-
-
-
-
-
-
-
-
-
--- -- Folding
--- map('n', 'zR', require('ufo').openAllFolds)
--- map('n', 'zM', require('ufo').closeAllFolds)
+vim.keymap.set('n', 'j', function()
+  return vim.v.count and "m'" .. vim.v.count .. "j" or "gj"
+end, { expr = true })
