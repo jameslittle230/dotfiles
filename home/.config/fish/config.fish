@@ -9,7 +9,7 @@ set -U fish_greeting "Welcome to Fish. 🐟"
 
 abbr -a vim nvim
 abbr -a cd z
-abbr -a ls eza -l --git --time-style long-iso --total-size --no-permissions -o
+abbr -a ls eza -AlUhb --time-style iso
 abbr -a c code --new-window .
 abbr -a v nvim .
 
