@@ -23,10 +23,12 @@ return {
       })
     end
   },
-  { "ggandor/leap.nvim",          event = "VeryLazy" },
-  { "tronikelis/ts-autotag.nvim", opts = {} },
-  { "chentoast/marks.nvim",       event = "VeryLazy", opts = {} },
-  { 'echasnovski/mini.tabline',   lazy = false,       opts = {} },
+  { "ggandor/leap.nvim",               event = "VeryLazy" },
+  { "tronikelis/ts-autotag.nvim",      opts = {} },
+  { "chentoast/marks.nvim",            event = "VeryLazy", opts = {} },
+  { 'echasnovski/mini.tabline',        lazy = false,       opts = {} },
+  { 'Chaitanyabsprip/fastaction.nvim', opts = {}, },
+  { 'RRethy/nvim-treesitter-endwise' },
 
   {
     "rcarriga/nvim-notify",

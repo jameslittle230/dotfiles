@@ -39,6 +39,9 @@ map('n', 'gt', vim.lsp.buf.type_definition, { desc = "Go to type definition" })
 map('n', 'K', vim.lsp.buf.hover, { desc = "Show hover" })
 map('n', 'gcc', function() require('Comment.api').toggle.linewise.current() end, { desc = "Toggle comment" })
 
+-- Enhanced operations
+vim.keymap.set("n", "ycc", "yygccp", { remap = true })
+
 -- Telescope/Search (,s prefix)
 map('n', ',sf', function() telescope.find_files() end, { desc = "Search files" })
 map('n', ',sg', function() telescope.live_grep() end, { desc = "Search text" })
@@ -58,7 +61,8 @@ map('n', ',ec', function() nvimtree.tree.collapse_all() end, { desc = "Collapse 
 map('n', ',er', function() nvimtree.tree.reload() end, { desc = "Refresh explorer" })
 
 -- LSP operations (,l prefix)
-map('n', ',la', vim.lsp.buf.code_action, { desc = "Code actions" })
+-- map('n', ',la', vim.lsp.buf.code_action, { desc = "Code actions" })
+map('n', ',la', '<cmd>lua require("fastaction").code_action()<CR>', { buffer = bufnr })
 map('n', ',lr', vim.lsp.buf.rename, { desc = "Rename symbol" })
 map('n', ',lf', function() vim.lsp.buf.format({ async = true }) end, { desc = "Format code" })
 map('n', ',ll', vim.lsp.codelens.run, { desc = "Run codelens" })
