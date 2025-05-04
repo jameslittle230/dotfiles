@@ -8,6 +8,9 @@ vim.opt.ruler = true                   -- Show ruler
 vim.opt.undolevels = 1000              -- Undo levels
 vim.opt.laststatus = 2                 -- Fix status bar
 
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
 -- Some recommended modern settings
 vim.opt.number = true             -- Show line numbers
 vim.opt.relativenumber = true     -- Show relative line numbers
@@ -39,11 +42,11 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
 -- Markdown word wrap
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+  pattern = { "markdown", "text", "txt", "plaintext", "" }, -- Empty string captures files with no filetype
   callback = function()
     vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true     -- Wrap at word boundaries
-    vim.opt_local.textwidth = 0        -- Prevents hard wrapping
-    vim.opt_local.wrapmargin = 0       -- Prevents automatic hard wrapping
+    vim.opt_local.linebreak = true -- Wrap at word boundaries
+    vim.opt_local.textwidth = 0    -- Prevents hard wrapping
+    vim.opt_local.wrapmargin = 0   -- Prevents automatic hard wrapping
   end
 })
