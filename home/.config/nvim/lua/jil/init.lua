@@ -2,7 +2,7 @@ vim.g.mapleader = ','
 vim.g.maplocalleader = "\\"
 
 require("jil.settings")
-require("jil.floating-terminal")
+require("jil.terminal")
 require('jil.lazy')
 require('jil.log-variables').setup({})
 
