@@ -33,8 +33,8 @@ return {
   {
     "rcarriga/nvim-notify",
     opts = {
-      stages = "fade",
-      render = "minimal",
+      stages = "fade_in_slide_out",
+      render = "compact",
       top_down = false,
     },
     config = function(_, opts)

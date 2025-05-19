@@ -1,26 +1,21 @@
 return {
-  {
-    'williamboman/mason.nvim',
-    lazy = false,
-    opts = {},
-  },
+  { 'williamboman/mason.nvim', lazy = false, opts = {} },
 
   {
     'nvim-lua/lsp-status.nvim',
     config = function()
       local lsp_status = require('lsp-status')
 
-      -- Configure to use ASCII symbols only
       lsp_status.config({
         indicator_errors = 'E',
         indicator_warnings = 'W',
         indicator_info = 'I',
         indicator_hint = 'H',
-        indicator_ok = 'OK',
+        indicator_ok = 'ok',
         spinner_frames = { '-', '\\', '|', '/' },
         status_symbol = ' LSP',
         component_separator = ' | ',
-        indicator_separator = ' ',
+        indicator_separator = '',
       })
 
       lsp_status.register_progress()
@@ -29,32 +24,12 @@ return {
 
   -- Autocompletion
   {
-    'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
-    config = function()
-      local cmp = require('cmp')
-
-      cmp.setup({
-        sources = {
-          { name = 'nvim_lsp' },
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<Tab>'] = cmp.mapping.complete(),
-          ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-d>'] = cmp.mapping.scroll_docs(4),
-          ['<CR>'] = cmp.mapping.confirm({ select = true }),
-        }),
-        snippet = {
-          expand = function(args)
-            vim.snippet.expand(args.body)
-          end,
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
-      })
-    end
+    "saghen/blink.cmp",
+    version = "1.*", -- release tag to download prebuilt binary
+    opts = {
+      keymap = { preset = "enter" },
+      completion = { documentation = { auto_show = true } },
+    }
   },
 
   -- LSP
@@ -63,76 +38,33 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" }
   },
   {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    opts = {},
+  },
+  {
     'neovim/nvim-lspconfig',
     cmd = { 'LspInfo', 'LspInstall', 'LspStart' },
     event = { 'BufReadPre', 'BufNewFile' },
     dependencies = {
-      { 'hrsh7th/cmp-nvim-lsp' },
       { 'williamboman/mason.nvim' },
       { 'williamboman/mason-lspconfig.nvim' },
       { 'nvimtools/none-ls.nvim' }
     },
     init = function()
-      -- Reserve a space in the gutter
-      -- This will avoid an annoying layout shift in the screen
       vim.opt.signcolumn = 'yes'
     end,
     config = function()
-      local lsp_defaults = require('lspconfig').util.default_config
-
-      -- Add cmp_nvim_lsp capabilities settings to lspconfig
-      -- This should be executed before you configure any language server
-      lsp_defaults.capabilities = vim.tbl_deep_extend(
-        'force',
-        lsp_defaults.capabilities,
-        require('cmp_nvim_lsp').default_capabilities()
-      )
-
-      -- LspAttach is where you enable features that only work
-      -- if there is a language server active in the file
-      vim.api.nvim_create_autocmd('LspAttach', {
-        desc = 'LSP actions',
-        callback = function(_event)
-          -- Keybindings might go here, but I have them in remaps.lua instead.
-        end,
-      })
-
       require('mason-lspconfig').setup({
         ensure_installed = {
           "lua_ls",
-          "ts_ls",
           "eslint"
         },
         handlers = {
-          -- this first function is the "default handler"
-          -- it applies to every language server without a "custom handler"
           function(server_name)
             require('lspconfig')[server_name].setup({})
           end,
-
-          ["denols"] = function()
-            require('lspconfig').denols.setup({
-              root_dir = require('lspconfig').util.root_pattern("deno.json", "deno.jsonc"),
-              init_options = {
-                enable = true,
-                lint = true,
-                unstable = true,
-                suggest = {
-                  imports = {
-                    hosts = {
-                      ["https://deno.land"] = true,
-                      ["https://cdn.nest.land"] = true,
-                      ["https://crux.land"] = true
-                    }
-                  }
-                }
-              }
-            })
-          end
         }
-      })
-
-      require('lspconfig').ts_ls.setup({
       })
 
       local buffer_autoformat = function(bufnr)
@@ -187,22 +119,6 @@ return {
             prefer_local = "node_modules/.bin",
           }),
         },
-      })
-
-      -- Setup typescript LSP
-      require('lspconfig').ts_ls.setup({
-        on_attach = function(client, _bufnr)
-          -- Disable tsserver formatting if prettier is available
-          if has_prettier() then
-            client.server_capabilities.documentFormattingProvider = false
-            client.server_capabilities.documentRangeFormattingProvider = false
-          end
-
-          -- Your existing keymaps and other on_attach logic here
-        end,
-        -- Your other tsserver settings here
-        root_dir = require('lspconfig').util.root_pattern("package.json"),
-        single_file_support = false
       })
 
       vim.api.nvim_create_autocmd('LspAttach', {

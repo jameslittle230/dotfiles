@@ -9,6 +9,8 @@ local telescope = require('telescope.builtin')
 local nvimtree = require('nvim-tree.api')
 local gitsigns = require('gitsigns')
 local lazy = require('lazy')
+local comments = require('Comment.api')
+local fastaction = require("fastaction")
 
 map('i', 'jk', '<Esc>')
 map('n', 's', '<Plug>(leap)')
@@ -36,11 +38,8 @@ map('n', 'gi', vim.lsp.buf.implementation, { desc = "Go to implementation" })
 map('n', 'gt', vim.lsp.buf.type_definition, { desc = "Go to type definition" })
 
 -- Standard operations
-map('n', 'K', vim.lsp.buf.hover, { desc = "Show hover" })
-map('n', 'gcc', function() require('Comment.api').toggle.linewise.current() end, { desc = "Toggle comment" })
-
--- Enhanced operations
-vim.keymap.set("n", "ycc", "yygccp", { remap = true })
+map('n', 'K', function() vim.lsp.buf.hover({ border = "rounded" }) end, { desc = "Show hover" })
+map('n', 'gcc', function() comments.toggle.linewise.current() end, { desc = "Toggle comment" })
 
 -- Telescope/Search (,s prefix)
 map('n', ',sf', function() telescope.find_files() end, { desc = "Search files" })
@@ -63,8 +62,7 @@ map('n', ',ec', function() nvimtree.tree.collapse_all() end, { desc = "Collapse 
 map('n', ',er', function() nvimtree.tree.reload() end, { desc = "Refresh explorer" })
 
 -- LSP operations (,l prefix)
--- map('n', ',la', vim.lsp.buf.code_action, { desc = "Code actions" })
-map('n', ',la', '<cmd>lua require("fastaction").code_action()<CR>', { buffer = bufnr })
+map('n', ',la', function() fastaction.code_action() end, { desc = "Code actions" })
 map('n', ',lr', vim.lsp.buf.rename, { desc = "Rename symbol" })
 map('n', ',lf', function() vim.lsp.buf.format({ async = true }) end, { desc = "Format code" })
 map('n', ',ll', vim.lsp.codelens.run, { desc = "Run codelens" })
@@ -72,8 +70,6 @@ map('n', ',lR', ':LspRestart<CR>', { desc = "Restart LSP" })
 map('n', ',li', ':LspInfo<CR>', { desc = "LSP info" })
 map('n', ',ld', function() telescope.lsp_definitions() end, { desc = "Search definitions" })
 map('n', ',lt', function() telescope.lsp_type_definitions() end, { desc = "Search type definitions" })
-map('n', ',ls', function() vim.snippet.jump(1) end, { desc = "Next snippet placeholder" })
-map('n', ',lS', function() vim.snippet.jump(-1) end, { desc = "Prev snippet placeholder" })
 
 -- Git operations (,g prefix)
 map('n', ',gs', function() gitsigns.stage_hunk() end, { desc = "Stage hunk" })
@@ -122,7 +118,7 @@ map('n', ',<space>s', function() telescope.lsp_document_symbols() end, { desc = 
 map('n', ',<space>v', function() lazy.update() end, { desc = "Update lazy.nvim" })
 
 -- Diagnostics
-map('n', ',dd', vim.diagnostic.open_float, { desc = "Line diagnostics" })
+map('n', ',dd', function() vim.diagnostic.open_float({ border = "rounded" }) end, { desc = "Line diagnostics" })
 map('n', ',dw', function() telescope.diagnostics() end, { desc = "Workspace diagnostics" })
 
 -- j/k
