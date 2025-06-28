@@ -5,19 +5,10 @@ return {
     'nvim-lua/lsp-status.nvim',
     config = function()
       local lsp_status = require('lsp-status')
-
       lsp_status.config({
-        indicator_errors = 'E',
-        indicator_warnings = 'W',
-        indicator_info = 'I',
-        indicator_hint = 'H',
-        indicator_ok = 'ok',
-        spinner_frames = { '-', '\\', '|', '/' },
-        status_symbol = ' LSP',
-        component_separator = ' | ',
-        indicator_separator = '',
+        indicator_hint = '!',
+        status_symbol = ''
       })
-
       lsp_status.register_progress()
     end
   },

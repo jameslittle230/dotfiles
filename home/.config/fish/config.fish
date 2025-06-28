@@ -12,6 +12,11 @@ abbr -a cd z
 abbr -a ls eza -AlUhb --time-style iso
 abbr -a c code --new-window .
 abbr -a v nvim .
+abbr -a g git
+
+abbr -a gco git checkout
+abbr -a gcob git checkout -b
+abbr -a gmaster git fetch origin master:master
 
 function mux
   set -l name main
@@ -80,6 +85,5 @@ function rename-branch
 
   echo "Branch '$old_branch' has been renamed to '$new_branch' locally and remotely."
 end
-
 
 test -f ~/.config/fish/config.local.fish && source ~/.config/fish/config.local.fish
