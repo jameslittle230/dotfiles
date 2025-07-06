@@ -6,8 +6,8 @@ return {
     config = function()
       local lsp_status = require('lsp-status')
       lsp_status.config({
-        indicator_hint = '!',
-        status_symbol = ''
+        status_symbol = '',
+        indicator_hint = '!'
       })
       lsp_status.register_progress()
     end
@@ -111,6 +111,8 @@ return {
           }),
         },
       })
+
+      require("typescript-tools").setup({})
 
       vim.api.nvim_create_autocmd('LspAttach', {
         callback = function(event)
