@@ -9,14 +9,16 @@ set -U fish_greeting "Welcome to Fish. 🐟"
 
 abbr -a vim nvim
 abbr -a cd z
-abbr -a ls eza -AlUhb --time-style iso
-abbr -a c code --new-window .
 abbr -a v nvim .
 abbr -a g git
 
 abbr -a gco git checkout
 abbr -a gcob git checkout -b
 abbr -a gmaster git fetch origin master:master
+
+function ls
+  eza --long --changed --header --binary --time-style long-iso $argv
+end
 
 function mux
   set -l name main
