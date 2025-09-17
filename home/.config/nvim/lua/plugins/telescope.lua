@@ -1,8 +1,9 @@
-return {
+return { {
   'nvim-telescope/telescope.nvim',
   branch = '0.1.x',
   dependencies = {
-    'nvim-lua/plenary.nvim'
+    'nvim-lua/plenary.nvim',
+    "debugloop/telescope-undo.nvim",
   },
   config = function()
     require('telescope').setup({
@@ -35,6 +36,12 @@ return {
 
         -- Make path display shorter
         path_display = { "truncate" },
+
+        extensions = {
+          undo = {
+
+          }
+        }
       },
       pickers = {
         find_files = {
@@ -51,5 +58,10 @@ return {
         }
       },
     })
+    require('telescope').load_extension("undo")
   end
+},
+  {
+
+  }
 }

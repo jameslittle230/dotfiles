@@ -51,6 +51,7 @@ map('n', ',sr', function() telescope.lsp_references() end, { desc = "Search refe
 map('n', ',sc', function() telescope.git_commits() end, { desc = "Search commits" })
 map('n', ',sd', function() telescope.diagnostics() end, { desc = "Search diagnostics" })
 map('n', ',st', function() telescope.treesitter() end, { desc = "Search treesitter" })
+map('n', ',su', "<cmd>Telescope undo<cr>", { desc = "Search undos" })
 
 -- File Tree (,e prefix)
 map('n', ',ee', function() nvimtree.tree.toggle() end, { desc = "Toggle explorer" })
