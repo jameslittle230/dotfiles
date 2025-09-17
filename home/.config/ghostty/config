@@ -1,0 +1,12 @@
+font-family = "Berkeley Mono"
+font-family = "JetBrains Mono NF"
+font-thicken = true
+cursor-style = "block"
+cursor-style-blink = false
+command = "/opt/homebrew/bin/fish"
+adjust-cell-width = "-1"
+minimum-contrast = 1.5
+cursor-color = "#CDCECF"
+theme = "One Dark"
+shell-integration = "fish"
+shell-integration-features = no-cursor,ssh-env,ssh-terminfo
