@@ -5,16 +5,15 @@ return {
     config = function()
       require("lualine").setup({
         options = {
-          icons_enabled = false,
           section_separators = "",
           component_separators = ""
         },
         sections = {
           lualine_a = { 'mode' },
-          lualine_b = { 'branch', 'diff', 'diagnostics' },
+          lualine_b = { { 'branch', icons_enabled = false }, 'diff', 'diagnostics' },
           lualine_c = { { 'filename', path = 1 } },
-          lualine_x = { "require'lsp-status'.status()", 'encoding', 'fileformat', 'filetype' },
-          lualine_y = { 'progress' },
+          lualine_x = { 'lsp_status', 'encoding', { 'filetype', icons_enabled = false } },
+          lualine_y = { 'searchcount', 'progress' },
           lualine_z = { 'location' }
         },
       })
