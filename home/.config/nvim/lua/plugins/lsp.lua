@@ -1,20 +1,9 @@
 return {
   { 'williamboman/mason.nvim', lazy = false, opts = {} },
 
-  {
-    'nvim-lua/lsp-status.nvim',
-    config = function()
-      local lsp_status = require('lsp-status')
-      lsp_status.config({
-        status_symbol = '',
-        indicator_hint = '!'
-      })
-      lsp_status.register_progress()
-    end
-  },
-
   -- Autocompletion
   {
+    -- https://cmp.saghen.dev/installation
     "saghen/blink.cmp",
     version = "1.*", -- release tag to download prebuilt binary
     opts = {

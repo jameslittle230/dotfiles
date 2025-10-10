@@ -8,6 +8,9 @@ return { {
   config = function()
     require('telescope').setup({
       defaults = {
+        preview = {
+          filesize_limit = 0.1,
+        },
         -- Enable recursive search by default
         vimgrep_arguments = {
           'rg',
@@ -21,13 +24,7 @@ return { {
           '--glob=!.git/*' -- but exclude .git directory
         },
 
-        file_ignore_patterns = {
-          "node_modules/",
-          ".git/",
-          "dist/",
-          "build/",
-          "%.lock"
-        },
+        file_ignore_patterns = { "node_modules/", ".git/", "dist/", "build/", "%.lock" },
 
         -- Improve find_files to use ripgrep if available
         find_files = {
@@ -37,11 +34,7 @@ return { {
         -- Make path display shorter
         path_display = { "truncate" },
 
-        extensions = {
-          undo = {
-
-          }
-        }
+        extensions = { undo = {} }
       },
       pickers = {
         find_files = {

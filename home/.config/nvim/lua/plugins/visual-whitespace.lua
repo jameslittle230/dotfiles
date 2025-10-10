@@ -1,5 +1,7 @@
 return {
   {
+    -- https://github.com/mcauley-penney/visual-whitespace.nvim
+    -- Display white space characters in visual mode
     'mcauley-penney/visual-whitespace.nvim',
     event = "ModeChanged *:[vV\22]", -- optionally, lazy load on entering visual mode
     config = true,

@@ -1,5 +1,19 @@
 return {
   {
+    -- https://github.com/Wansmer/treesj
+    -- ,tm to toggle split/join blocks of code across multiple lines
+    'Wansmer/treesj',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = {
+      use_default_keymaps = false,
+    },
+  },
+
+
+  {
+    -- https://github.com/aaronik/treewalker.nvim
+    -- Move around your code in a syntax tree aware manner
+    -- Ctrl-HJKL or Ctrl-Shift-HJKL to navigate or move treesitter hunks
     'aaronik/treewalker.nvim',
 
     -- The following options are the defaults.
@@ -84,6 +98,7 @@ return {
               ["]l"] = { query = "@loop.outer", desc = "next loop start" },
               ["]s"] = { query = "@scope", query_group = "locals", desc = "next scope" },
               ["]z"] = { query = "@fold", query_group = "folds", desc = "next fold" },
+              ["]/"] = { query = "@comment", query_group = "comments", desc = "next comment" },
             },
             goto_next_end = {
               ["]F"] = { query = "@call.outer", desc = "next function call end" },
@@ -98,6 +113,7 @@ return {
               ["[c"] = { query = "@class.outer", desc = "prev class start" },
               ["[i"] = { query = "@conditional.outer", desc = "prev conditional start" },
               ["[l"] = { query = "@loop.outer", desc = "prev loop start" },
+              ["[/"] = { query = "@comment", query_group = "comments", desc = "prev comment" },
             },
             goto_previous_end = {
               ["[F"] = { query = "@call.outer", desc = "prev function call end" },
@@ -132,6 +148,9 @@ return {
               ["aa"] = { query = "@parameter.outer", desc = "select outer part of a parameter/argument" },
               ["ia"] = { query = "@parameter.inner", desc = "select inner part of a parameter/argument" },
 
+              ["ac"] = { query = "@comment.outer", desc = "select outer part of a comment" },
+              ["ic"] = { query = "@comment.inner", desc = "select inner part of a comment" },
+
               ["ai"] = { query = "@conditional.outer", desc = "select outer part of a conditional" },
               ["ii"] = { query = "@conditional.inner", desc = "select inner part of a conditional" },
 
@@ -143,9 +162,6 @@ return {
 
               ["am"] = { query = "@function.outer", desc = "select outer part of a method/function definition" },
               ["im"] = { query = "@function.inner", desc = "select inner part of a method/function definition" },
-
-              ["ac"] = { query = "@class.outer", desc = "select outer part of a class" },
-              ["ic"] = { query = "@class.inner", desc = "select inner part of a class" },
             },
           },
         },
