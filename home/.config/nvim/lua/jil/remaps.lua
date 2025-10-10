@@ -6,7 +6,6 @@ local function map(mode, l, r, opts)
 end
 
 local telescope = require('telescope.builtin')
-local nvimtree = require('nvim-tree.api')
 local gitsigns = require('gitsigns')
 local lazy = require('lazy')
 local comments = require('Comment.api')
@@ -54,13 +53,8 @@ map('n', ',st', function() telescope.treesitter() end, { desc = "Search treesitt
 map('n', ',su', "<cmd>Telescope undo<cr>", { desc = "Search undos" })
 
 -- File Tree (,e prefix)
-map('n', ',ee', function() nvimtree.tree.toggle() end, { desc = "Toggle explorer" })
-map('n', ',E', function() nvimtree.tree.focus() end, { desc = "Focus explorer" })
-map('n', ',ef', function()
-  nvimtree.tree.find_file(); nvimtree.tree.focus()
-end, { desc = "Find file in explorer" })
-map('n', ',ec', function() nvimtree.tree.collapse_all() end, { desc = "Collapse explorer" })
-map('n', ',er', function() nvimtree.tree.reload() end, { desc = "Refresh explorer" })
+map('n', ',ee', ":Neotree show toggle<CR>", { desc = "Toggle explorer" })
+map('n', ',ef', ":Neotree focus reveal<CR>", { desc = "Focus explorer" })
 
 -- LSP operations (,l prefix)
 map('n', ',la', function() fastaction.code_action() end, { desc = "Code actions" })

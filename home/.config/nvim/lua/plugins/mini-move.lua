@@ -1,4 +1,4 @@
-return {
+return { {
   'echasnovski/mini.move',
   version = '*',
   opts = {
@@ -16,4 +16,4 @@ return {
       line_up = '<C-k>',
     },
   }
-}
+}, {} }

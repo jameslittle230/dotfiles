@@ -1,5 +1,7 @@
 return {
   {
+    -- https://github.com/numToStr/Comment.nvim
+    -- Adds keybindings for quickly commenting lines, blocks, or text objects
     'numToStr/Comment.nvim',
     config = function()
       require('Comment').setup {
@@ -9,8 +11,19 @@ return {
       }
     end,
   },
-  { 'JoosepAlviste/nvim-ts-context-commentstring' },
+
+
   {
+    -- https://github.com/JoosepAlviste/nvim-ts-context-commentstring
+    -- Fixes comment toggling behavior for files with multiple comment styles
+    -- within the same file (like TSX files)
+    'JoosepAlviste/nvim-ts-context-commentstring'
+  },
+
+
+  {
+    -- https://github.com/andrewferrier/debugprint.nvim
+    -- Adds shortcuts for quickly adding debug print lines
     "andrewferrier/debugprint.nvim",
     opts = {
       display_location = true,
