@@ -1,11 +1,10 @@
 return {
-  { 'nvim-mini/mini.tabline',    version = '*', opts = {} },
   {
-    'echasnovski/mini.move',
+    'nvim-mini/mini.move',
     version = '*',
     opts = {
       mappings = {
-        -- Move visual selection in Visual mode. Defaults are Alt (Meta) + hjkl.
+        -- move visual selection in visual mode. Defaults are Alt (Meta) + hjkl.
         left = '<S-h>',
         right = '<S-l>',
         down = '<S-j>',
@@ -19,6 +18,7 @@ return {
       },
     }
   },
+  { 'nvim-mini/mini.tabline',    version = '*', opts = {} },
   { 'nvim-mini/mini.cursorword', version = '*' },
-  { 'nvim-mini/mini.ai',         version = '*' },
+  -- { 'nvim-mini/mini.ai',         version = '*' },
 }

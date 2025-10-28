@@ -12,6 +12,16 @@ return {
     }
   },
 
+  {
+    "chrisgrieser/nvim-various-textobjs",
+    event = "VeryLazy",
+    opts = {
+      keymaps = {
+        useDefaults = true
+      }
+    },
+  },
+
 
   {
     -- https://github.com/aaronik/treewalker.nvim
@@ -34,21 +44,15 @@ return {
       highlight_group = 'CursorLine',
     },
     keys = {
-      { '<A-k>', '<cmd>Treewalker Up<cr>', mode = { 'n', 'v' }, silent = true },
-      { '<A-j>', '<cmd>Treewalker Down<cr>', mode = { 'n', 'v' }, silent = true },
-      { '<A-h>', '<cmd>Treewalker Left<cr>', mode = { 'n', 'v' }, silent = true },
-      { '<A-l>', '<cmd>Treewalker Right<cr>', mode = { 'n', 'v' }, silent = true },
-      { '<A-S-k>', '<cmd>Treewalker SwapUp<cr>', silent = true },
-      { '<A-S-j>', '<cmd>Treewalker SwapDown<cr>', silent = true },
-      { '<A-S-h>', '<cmd>Treewalker SwapLeft<cr>', silent = true },
+      { '<A-k>',   '<cmd>Treewalker Up<cr>',        mode = { 'n', 'v' }, silent = true },
+      { '<A-j>',   '<cmd>Treewalker Down<cr>',      mode = { 'n', 'v' }, silent = true },
+      { '<A-h>',   '<cmd>Treewalker Left<cr>',      mode = { 'n', 'v' }, silent = true },
+      { '<A-l>',   '<cmd>Treewalker Right<cr>',     mode = { 'n', 'v' }, silent = true },
+      { '<A-S-k>', '<cmd>Treewalker SwapUp<cr>',    silent = true },
+      { '<A-S-j>', '<cmd>Treewalker SwapDown<cr>',  silent = true },
+      { '<A-S-h>', '<cmd>Treewalker SwapLeft<cr>',  silent = true },
       { '<A-S-l>', '<cmd>Treewalker SwapRight<cr>', silent = true },
     }
-  },
-
-  {
-    'glts/vim-textobj-comment',
-    dependencies = { 'kana/vim-textobj-user' },
-    lazy = false,
   },
 
   {
