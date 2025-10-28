@@ -8,6 +8,10 @@ return {
       'MunifTanjim/nui.nvim',
     },
     lazy = false,
+    keys = {
+      { ',ee', ":Neotree show toggle<CR>", desc = "Toggle explorer" },
+      { ',ef', ":Neotree focus reveal<CR>", desc = "Focus explorer" },
+    },
     opts = {
       close_if_last_window = true,
       window = {

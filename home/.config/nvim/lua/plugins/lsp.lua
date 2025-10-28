@@ -31,6 +31,23 @@ return {
       { 'williamboman/mason-lspconfig.nvim' },
       { 'nvimtools/none-ls.nvim' }
     },
+    keys = {
+      -- LSP Go-to
+      { 'gd', vim.lsp.buf.definition, desc = "Go to definition" },
+      { 'gr', vim.lsp.buf.references, desc = "Go to references" },
+      { 'gD', vim.lsp.buf.declaration, desc = "Go to declaration" },
+      { 'gi', vim.lsp.buf.implementation, desc = "Go to implementation" },
+      { 'gt', vim.lsp.buf.type_definition, desc = "Go to type definition" },
+      { 'K', function() vim.lsp.buf.hover({ border = "rounded" }) end, desc = "Show hover" },
+      -- LSP operations (,l prefix)
+      { ',lr', vim.lsp.buf.rename, desc = "Rename symbol" },
+      { ',lf', function() vim.lsp.buf.format({ async = true }) end, desc = "Format code" },
+      { ',ll', vim.lsp.codelens.run, desc = "Run codelens" },
+      { ',lR', ':LspRestart<CR>', desc = "Restart LSP" },
+      { ',li', ':LspInfo<CR>', desc = "LSP info" },
+      { ',ld', function() require('telescope.builtin').lsp_definitions() end, desc = "Search definitions" },
+      { ',lt', function() require('telescope.builtin').lsp_type_definitions() end, desc = "Search type definitions" },
+    },
     init = function()
       vim.opt.signcolumn = 'yes'
     end,

@@ -12,6 +12,10 @@ return {
     "chentoast/marks.nvim",
     event = "VeryLazy",
     opts = {},
+    keys = {
+      { ',md', function() require('marks').toggle() end, desc = "Toggle mark" },
+      { ',mp', function() require('marks').preview() end, desc = "Preview mark" },
+    }
   },
 
 
@@ -21,6 +25,9 @@ return {
     'Chaitanyabsprip/fastaction.nvim',
     opts = {
       dismiss_keys = { "j", "k", "<ESC>", "q" },
+    },
+    keys = {
+      { ',la', function() require('fastaction').code_action() end, desc = "Code actions" },
     }
   },
 
