@@ -33,6 +33,12 @@ return {
   },
 
   {
+    'glts/vim-textobj-comment',
+    dependencies = { 'kana/vim-textobj-user' },
+    lazy = false,
+  },
+
+  {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },

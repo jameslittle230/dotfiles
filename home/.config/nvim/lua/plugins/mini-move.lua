@@ -19,4 +19,6 @@ return {
       },
     }
   },
-  { 'nvim-mini/mini.cursorword', version = '*' } }
+  { 'nvim-mini/mini.cursorword', version = '*' },
+  { 'nvim-mini/mini.ai',         version = '*' },
+}
