@@ -7,8 +7,17 @@ return {
     "saghen/blink.cmp",
     version = "1.*", -- release tag to download prebuilt binary
     opts = {
-      keymap = { preset = "enter" },
-      completion = { documentation = { auto_show = true } },
+      cmdline = {
+        keymap = { preset = 'cmdline' },
+        completion = { menu = { auto_show = false } },
+      },
+      keymap = { preset = "enter", ['<S-CR>'] = { 'select_and_accept' } },
+      completion = {
+        menu = {},
+        accept = { auto_brackets = { enabled = false } },
+        list = { selection = { preselect = false, auto_insert = true } },
+        documentation = { auto_show = true },
+      },
     }
   },
 
@@ -33,19 +42,19 @@ return {
     },
     keys = {
       -- LSP Go-to
-      { 'gd', vim.lsp.buf.definition, desc = "Go to definition" },
-      { 'gr', vim.lsp.buf.references, desc = "Go to references" },
-      { 'gD', vim.lsp.buf.declaration, desc = "Go to declaration" },
-      { 'gi', vim.lsp.buf.implementation, desc = "Go to implementation" },
-      { 'gt', vim.lsp.buf.type_definition, desc = "Go to type definition" },
-      { 'K', function() vim.lsp.buf.hover({ border = "rounded" }) end, desc = "Show hover" },
+      { 'gd',  vim.lsp.buf.definition,                                             desc = "Go to definition" },
+      { 'gr',  vim.lsp.buf.references,                                             desc = "Go to references" },
+      { 'gD',  vim.lsp.buf.declaration,                                            desc = "Go to declaration" },
+      { 'gi',  vim.lsp.buf.implementation,                                         desc = "Go to implementation" },
+      { 'gt',  vim.lsp.buf.type_definition,                                        desc = "Go to type definition" },
+      { 'K',   function() vim.lsp.buf.hover({ border = "rounded" }) end,           desc = "Show hover" },
       -- LSP operations (,l prefix)
-      { ',lr', vim.lsp.buf.rename, desc = "Rename symbol" },
-      { ',lf', function() vim.lsp.buf.format({ async = true }) end, desc = "Format code" },
-      { ',ll', vim.lsp.codelens.run, desc = "Run codelens" },
-      { ',lR', ':LspRestart<CR>', desc = "Restart LSP" },
-      { ',li', ':LspInfo<CR>', desc = "LSP info" },
-      { ',ld', function() require('telescope.builtin').lsp_definitions() end, desc = "Search definitions" },
+      { ',lr', vim.lsp.buf.rename,                                                 desc = "Rename symbol" },
+      { ',lf', function() vim.lsp.buf.format({ async = true }) end,                desc = "Format code" },
+      { ',ll', vim.lsp.codelens.run,                                               desc = "Run codelens" },
+      { ',lR', ':LspRestart<CR>',                                                  desc = "Restart LSP" },
+      { ',li', ':LspInfo<CR>',                                                     desc = "LSP info" },
+      { ',ld', function() require('telescope.builtin').lsp_definitions() end,      desc = "Search definitions" },
       { ',lt', function() require('telescope.builtin').lsp_type_definitions() end, desc = "Search type definitions" },
     },
     init = function()
