@@ -47,4 +47,18 @@ function M.bufremove(buf)
   end
 end
 
+--- Remove all buffers except the specified one (or current buffer if not specified).
+--- This will use the bufremove function for each buffer, so modified buffers will
+--- prompt for save confirmation.
+---@param keep number? The buffer to keep (defaults to current buffer)
+function M.bufremove_others(keep)
+  keep = keep or vim.api.nvim_get_current_buf()
+
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if buf ~= keep and vim.fn.buflisted(buf) == 1 then
+      M.bufremove(buf)
+    end
+  end
+end
+
 return M

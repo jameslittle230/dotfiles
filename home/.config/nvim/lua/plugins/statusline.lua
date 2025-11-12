@@ -12,7 +12,11 @@ return {
           lualine_a = { 'mode' },
           lualine_b = { { 'branch', icons_enabled = false }, 'diff', 'diagnostics' },
           lualine_c = { { 'filename', path = 1 } },
-          lualine_x = { 'lsp_status', 'encoding', { 'filetype', icons_enabled = false } },
+          lualine_x = {
+            { 'lsp_status', ignore_lsp = { 'null-ls' } },
+            'encoding',
+            { 'filetype',   icons_enabled = false },
+          },
           lualine_y = { 'searchcount', 'progress' },
           lualine_z = { 'location' }
         },

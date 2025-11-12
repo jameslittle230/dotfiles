@@ -9,11 +9,12 @@ return {
     },
     lazy = false,
     keys = {
-      { ',ee', ":Neotree show toggle<CR>",  desc = "Toggle explorer" },
-      { ',ef', ":Neotree focus reveal<CR>", desc = "Focus explorer" },
+      { ',ee', ":Neotree show toggle<CR>",  desc = "Toggle explorer", silent = true },
+      { ',ef', ":Neotree focus reveal<CR>", desc = "Focus explorer",  silent = true },
     },
     opts = {
-      close_if_last_window = false,
+      close_if_last_window = true,
+      auto_clean_after_session_restore = true,
       window = {
         position = "right"
       },
