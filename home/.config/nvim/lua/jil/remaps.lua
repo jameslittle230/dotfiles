@@ -39,15 +39,17 @@ map('n', '<S-H>', ':bprevious<CR>', { desc = "Previous buffer" })
 -- Standard operations
 map('n', ',zz', function() lazy.update() end, { desc = "Update lazy.nvim" })
 
--- Window, split, and buffer management (,w prefix)
+-- Window and split management
+map('n', ',bo', function() require('jil.bufremove').bufremove_others() end, { desc = "Close other buffers" })
+map('n', ',bd', function() require('jil.bufremove').bufremove() end, { desc = "Delete buffer" })
+map('n', ',bl', function() telescope.buffers() end, { desc = "List buffers" })
+map('n', ',br', ':BufferRestore<CR>', { desc = "Restore last buffer" })
+
+-- Buffer management
 map('n', ',wv', ':vsplit<CR>', { desc = "Split vertical" })
 map('n', ',wh', ':split<CR>', { desc = "Split horizontal" })
-map('n', ',wo', function() require('jil.bufremove').bufremove_others() end, { desc = "Close other windows" })
 map('n', ',w=', '<C-w>=', { desc = "Equal width" })
 map('n', ',wm', ':WindowsMaximize<CR>', { desc = "Maximize window" })
-map('n', ',wd', function() require('jil.bufremove').bufremove() end, { desc = "Delete buffer" })
-map('n', ',wl', function() telescope.buffers() end, { desc = "List buffers" })
-map('n', ',wr', ':BufferRestore<CR>', { desc = "Restore last buffer" })
 
 -- Diagnostics
 map('n', ',dd', function() vim.diagnostic.open_float({ border = "rounded" }) end, { desc = "Line diagnostics" })
