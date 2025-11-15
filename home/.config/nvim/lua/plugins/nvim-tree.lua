@@ -7,6 +7,7 @@ return {
       'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
       'MunifTanjim/nui.nvim',
     },
+    lazy = false,
     keys = {
       { ',ee', ":Neotree show toggle<CR>",  desc = "Toggle explorer", silent = true },
       { ',ef', ":Neotree focus reveal<CR>", desc = "Focus explorer",  silent = true },

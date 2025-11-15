@@ -1,5 +1,10 @@
 return {
   {
+    -- :DiffViewOpen
+    'sindrets/diffview.nvim',
+    lazy = false,
+  },
+  {
     -- https://github.com/lewis6991/gitsigns.nvim
     -- Shows git status in left rail, but also includes lots of other Git functionality
     'lewis6991/gitsigns.nvim',
