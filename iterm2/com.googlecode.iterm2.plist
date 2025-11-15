@@ -2,6 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AIFeatureFunctionCalling</key>
+	<true/>
+	<key>AIFeatureHostedCodeInterpeter</key>
+	<true/>
+	<key>AIFeatureHostedFileSearch</key>
+	<true/>
+	<key>AIFeatureHostedWebSearch</key>
+	<true/>
+	<key>AIFeatureStreamingResponses</key>
+	<true/>
+	<key>AITermAPI</key>
+	<integer>2</integer>
+	<key>AIVectorStore</key>
+	<integer>1</integer>
+	<key>AiMaxTokens</key>
+	<integer>1000000</integer>
+	<key>AiModel</key>
+	<string>gpt-4.1</string>
+	<key>AiResponseMaxTokens</key>
+	<integer>32768</integer>
+	<key>AitermURL</key>
+	<string>https://api.openai.com/v1/responses</string>
 	<key>AllowClipboardAccess</key>
 	<true/>
 	<key>AlwaysOpenWindowAtStartup</key>
@@ -784,11 +806,11 @@
 			<key>Name</key>
 			<string>Default</string>
 			<key>Non Ascii Font</key>
-			<string>Monaco 12</string>
+			<string>BerkeleyMono-Regular 14</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>JetBrainsMonoNF-Regular 14</string>
+			<string>BerkeleyMono-Regular 14</string>
 			<key>Open Toolbelt</key>
 			<false/>
 			<key>Option Key Sends</key>
@@ -843,6 +865,8 @@
 			<false/>
 			<key>Silence Bell</key>
 			<false/>
+			<key>Special Font Config</key>
+			<string>{"entries":[{"count":4,"start":9211,"fontName":"UnicodeIECsymbol"},{"count":1,"start":9829,"fontName":"Octicons"},{"count":1,"start":9889,"fontName":"Octicons"},{"count":1,"start":11096,"fontName":"UnicodeIECsymbol"},{"count":11,"start":57344,"fontName":"Pomicons"},{"count":3,"start":57504,"fontName":"PowerlineSymbols"},{"count":1,"start":57507,"fontName":"PowerlineExtraSymbols"},{"count":4,"start":57520,"fontName":"PowerlineSymbols"},{"count":21,"start":57524,"fontName":"PowerlineExtraSymbols"},{"count":1,"start":57546,"fontName":"PowerlineExtraSymbols"},{"count":8,"start":57548,"fontName":"PowerlineExtraSymbols"},{"destination":57856,"count":170,"start":57344,"fontName":"font-awesome-extension"},{"destination":58112,"count":236,"start":61440,"fontName":"Weather Icons Regular"},{"destination":58874,"count":177,"start":58618,"fontName":"Nerd Font File Types Regular"},{"destination":59136,"count":198,"start":58880,"fontName":"icomoon"},{"count":396,"start":60000,"fontName":"codicon"},{"count":736,"start":61440,"fontName":"FontAwesome"},{"count":48,"start":62208,"fontName":"font-logos"},{"destination":62464,"count":168,"start":61440,"fontName":"Octicons"},{"destination":62633,"count":1,"start":62076,"fontName":"Octicons"},{"destination":62634,"count":86,"start":61609,"fontName":"Octicons"},{"destination":62720,"count":2118,"start":61441,"fontName":"Material Design Icons"},{"count":6896,"start":983041,"fontName":"Material Design Icons Desktop"}],"version":1}</string>
 			<key>Status Bar Layout</key>
 			<dict>
 				<key>advanced configuration</key>
@@ -997,7 +1021,7 @@
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
-			<false/>
+			<true/>
 			<key>Vertical Spacing</key>
 			<real>1</real>
 			<key>Visual Bell</key>
