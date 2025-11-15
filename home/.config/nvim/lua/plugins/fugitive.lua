@@ -8,8 +8,20 @@ return {
     -- https://github.com/lewis6991/gitsigns.nvim
     -- Shows git status in left rail, but also includes lots of other Git functionality
     'lewis6991/gitsigns.nvim',
-    opts = { current_line_blame = true },
+    opts = {
+      current_line_blame = true,
+      current_line_blame_opts = {
+        virt_text_pos = 'right_align'
+      }
+    },
     lazy = false, -- load on startup since git integration is commonly needed
+    init = function()
+      -- Make the current line blame more transparent
+      vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", {
+        fg = "#5a6374", -- Rounds to the nearest theme color, I think
+        italic = true,
+      })
+    end,
     keys = {
       { ']g',  function() require('gitsigns').next_hunk() end,                 desc = "Next git hunk" },
       { '[g',  function() require('gitsigns').prev_hunk() end,                 desc = "Previous git hunk" },
