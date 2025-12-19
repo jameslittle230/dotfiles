@@ -1,5 +1,3 @@
 require("jil.settings")
-require("jil.terminal")
-require('jil.lazy')
-require('jil.bufremove')
+require("jil.lazy")
 require("jil.remaps")

@@ -1,8 +1,3 @@
-vim.g.mapleader = ','
-vim.g.maplocalleader = "\\"
-
-vim.g.have_nerd_font = true
-
 vim.opt.backspace = 'indent,eol,start' -- Allow backspace in insert mode
 vim.opt.history = 1000                 -- Store lots of command line history
 vim.opt.showcmd = true                 -- Show incomplete commands down the bottom
@@ -41,13 +36,3 @@ vim.opt.softtabstop = 2    -- Number of spaces tabs count for in insert mode
 vim.opt.autoindent = true  -- Copy indent from current line when starting new line
 vim.opt.breakindent = true -- Wrapped lines stay visually indented on subsequent lines
 
--- Markdown word wrap
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "markdown", "text", "txt", "plaintext", "" }, -- Empty string captures files with no filetype
-  callback = function()
-    vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true -- Wrap at word boundaries
-    vim.opt_local.textwidth = 0    -- Prevents hard wrapping
-    vim.opt_local.wrapmargin = 0   -- Prevents automatic hard wrapping
-  end
-})
