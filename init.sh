@@ -8,4 +8,6 @@ cp -Rf ./home/ ~
 defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$(pwd)/iterm2"
 defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
 
-exec $(which fish)
+if [[ "${1:-}" != "--no-shell" ]]; then
+    exec $(which fish)
+fi
