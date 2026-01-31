@@ -1,6 +1,35 @@
 return {
-  { 'williamboman/mason.nvim', lazy = false,    opts = {} },
-  { "saghen/blink.cmp",        version = "1.*", opts = {} },
+  {
+    'williamboman/mason.nvim',
+    lazy = false,
+    opts = {}
+  },
+
+  {
+    "saghen/blink.cmp",
+    version = "1.*",
+    opts = {
+      cmdline = { enabled = false },
+      keymap = { preset = "enter" },
+      completion = {
+        keyword = { range = 'full' },
+        list = { selection = { preselect = false, auto_insert = true } },
+        ghost_text = { enabled = true },
+        documentation = { window = { border = 'single' } },
+        menu = {
+          border = "single",
+          draw = {
+            columns = {
+              { "kind_icon" },
+              { "label",    "label_description", gap = 1 },
+              { "kind" }
+            }
+          }
+        }
+      }
+    }
+  },
+
   {
     'neovim/nvim-lspconfig',
     cmd = { 'LspInfo', 'LspInstall', 'LspStart' },
@@ -13,7 +42,8 @@ return {
       require('mason-lspconfig').setup({
         ensure_installed = {
           "lua_ls",
-          "eslint"
+          "eslint",
+          "ts_ls",
         },
         handlers = {
           function(server_name)
@@ -21,41 +51,37 @@ return {
           end,
         }
       })
-
-      local buffer_autoformat = function(bufnr)
-        local group = 'lsp_autoformat'
-        vim.api.nvim_create_augroup(group, { clear = false })
-        vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
-
-        local filetype = vim.bo[bufnr].filetype
-
-        if filetype ~= 'yaml' and filetype ~= 'yml' then
-          vim.api.nvim_create_autocmd('BufWritePre', {
-            buffer = bufnr,
-            group = group,
-            desc = 'LSP format on save',
-            callback = function()
-              -- note: do not enable async formatting
-              vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
-            end,
-          })
-        end
-      end
-
-      vim.api.nvim_create_autocmd('LspAttach', {
-        callback = function(event)
-          local id = vim.tbl_get(event, 'data', 'client_id')
-          local client = id and vim.lsp.get_client_by_id(id)
-          if client == nil then
-            return
-          end
-
-          -- make sure there is at least one client with formatting capabilities
-          if client.supports_method('textDocument/formatting') then
-            buffer_autoformat(event.buf)
-          end
-        end
-      })
     end
+  },
+  {
+    'stevearc/conform.nvim',
+    event = { 'BufWritePre' },
+    cmd = { 'ConformInfo' },
+    opts = {
+      formatters_by_ft = {
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        lua = { "stylua" },
+        python = { "black" },
+        rust = { "rustfmt", lsp_format = "fallback" },
+      },
+      format_on_save = function(bufnr)
+        -- Disable autoformat for yaml
+        local filetype = vim.bo[bufnr].filetype
+        if filetype == 'yaml' or filetype == 'yml' then
+          return
+        end
+
+        return {
+          timeout_ms = 500,
+          lsp_fallback = true, -- Uses LSP if no conform formatter configured
+        }
+      end,
+    },
   }
 }

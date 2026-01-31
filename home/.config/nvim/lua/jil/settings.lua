@@ -1,3 +1,7 @@
+-- Disable netrw (built-in file explorer)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 vim.opt.backspace = 'indent,eol,start' -- Allow backspace in insert mode
 vim.opt.history = 1000                 -- Store lots of command line history
 vim.opt.showcmd = true                 -- Show incomplete commands down the bottom

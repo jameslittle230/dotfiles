@@ -4,17 +4,26 @@ return {
     config = function() vim.cmd.colorscheme('nightfox') end
   },
 
-  { 'nvim-mini/mini.ai',                   version = '*',         opts = {} },
-  { 'nvim-mini/mini.bracketed',            version = '*',         opts = {} },
-  { 'nvim-mini/mini.bufremove',            version = '*',         opts = {} },
-  { 'nvim-mini/mini.files',                version = '*',         opts = {} },
-  { 'nvim-mini/mini.tabline',              version = '*',         opts = {} },
-  { 'nvim-mini/mini.trailspace',           version = '*',         opts = {} },
-  { 'nvim-mini/mini.notify',               version = '*',         opts = {} },
-  { 'nvim-mini/mini.cmdline',              version = '*',         opts = {} },
-  { 'nvim-mini/mini.splitjoin',            version = '*',         opts = {} },
-  { 'nvim-mini/mini.move',                 version = '*',         opts = {} },
-  { 'nvim-mini/mini.cursorword',           version = '*',         opts = {} },
+  { 'nvim-mini/mini.ai',         version = '*', opts = {} },
+  { 'nvim-mini/mini.bracketed',  version = '*', opts = {} },
+  { 'nvim-mini/mini.bufremove',  version = '*', opts = {} },
+  { 'nvim-mini/mini.tabline',    version = '*', opts = {} },
+  { 'nvim-mini/mini.trailspace', version = '*', opts = {} },
+  { 'nvim-mini/mini.notify',     version = '*', opts = {} },
+  { 'nvim-mini/mini.cmdline',    version = '*', opts = {} },
+  { 'nvim-mini/mini.splitjoin',  version = '*', opts = {} }, -- gS
+  { 'nvim-mini/mini.cursorword', version = '*', opts = {} },
+
+  {
+    'nvim-mini/mini.files',
+    version = '*',
+    opts = {
+      options = {
+        use_as_default_explorer = false,
+      },
+    },
+  },
+
 
   { "folke/which-key.nvim",                opts = {} },
 
@@ -22,9 +31,37 @@ return {
   { 'windwp/nvim-ts-autotag',              lazy = false,          opts = {} },
   { 'kylechui/nvim-surround',              lazy = false,          opts = {} },
   { "lukas-reineke/indent-blankline.nvim", main = "ibl",          opts = {} },
+  { 'numToStr/Comment.nvim',               opts = {} },
 
   { 'lewis6991/gitsigns.nvim',             opts = {} },
   { 'tpope/vim-fugitive',                  lazy = false },
+
+  {
+    'JoosepAlviste/nvim-ts-context-commentstring',
+    opts = {}
+  },
+
+  {
+    'Chaitanyabsprip/fastaction.nvim',
+    opts = { dismiss_keys = { "j", "k", "<ESC>", "q" }, }
+  },
+
+  {
+    'nvim-mini/mini.move',
+    version = '*',
+    opts = {
+      mappings = {
+        left = '<S-h>',
+        right = '<S-l>',
+        down = '<S-j>',
+        up = '<S-k>',
+      }
+    },
+    options = {
+      reindent_linewise = true,
+    },
+  },
+
 
   {
     "folke/snacks.nvim",
