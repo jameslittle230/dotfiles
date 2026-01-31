@@ -34,6 +34,7 @@ map("n", ",ef", "<Cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<CR>", "Op
 map("n", ",?", '<Cmd>lua require("which-key").show({ global = true })<CR>', "Open which-key")
 
 map("n", ",bd", "<Cmd>bd<CR>", "Delete buffer")
+map("n", ",bo", "<Cmd>%bd|e#|bd#<CR>", "Delete other buffers")
 
 map('n', ',wv', ':vsplit<CR>', "Split vertical")
 map('n', ',wh', ':split<CR>', "Split horizontal")
