@@ -63,9 +63,9 @@ default-root-container-orientation = 'auto'
     alt-shift-r = 'mode resize'
 
 [mode.resize.binding]
-    j = 'resize smart +50'
+    j = 'resize smart -50'
     k = 'resize smart -50'
-    = = 'flatten-workspace-tree'
+    r = 'flatten-workspace-tree'
     enter = 'mode main'
     esc = 'mode main'
 
