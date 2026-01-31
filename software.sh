@@ -2,7 +2,9 @@
 set -euo pipefail
 
 brew install bat
+brew install doggo
 brew install eza
+brew install entr
 brew install fd
 brew install ffmpeg
 brew install fish
@@ -11,6 +13,7 @@ brew install gh
 brew install git-delta
 brew install imagemagick
 brew install jq
+brew install lazygit
 brew install neovim
 brew install nodenv
 brew install ripgrep
@@ -22,3 +25,5 @@ brew install wget
 brew install yt-dlp
 brew install zoxide
 
+brew install --cask nikitabobko/tap/aerospace
+brew install FelixKratz/formulae/borders
