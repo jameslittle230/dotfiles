@@ -5,6 +5,8 @@ starship init fish | source
 fzf --fish | source
 source ~/.iterm2_shell_integration.fish
 
+fish_add_path $HOME/.local/bin
+
 set -U fish_greeting "Welcome to Fish. 🐟"
 
 abbr -a vim nvim
