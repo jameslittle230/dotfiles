@@ -4,7 +4,49 @@ return {
     config = function() vim.cmd.colorscheme('nightfox') end
   },
 
-  { 'nvim-mini/mini.ai',         version = '*', opts = {} },
+  {
+    'nvim-mini/mini.ai',
+    version = '*',
+    opts = function()
+      local gen_spec = require('mini.ai').gen_spec
+
+      -- Custom treesitter query spec for captures not in the textobjects query
+      local function ts_query_spec(query_string, capture_name)
+        return function(_, _, _)
+          local buf = vim.api.nvim_get_current_buf()
+          local has_parser, parser = pcall(vim.treesitter.get_parser, buf, nil, { error = false })
+          if not has_parser or parser == nil then return {} end
+
+          local lang = parser:lang()
+          local query = vim.treesitter.query.parse(lang, query_string)
+          local regions = {}
+          for _, tree in ipairs(parser:trees()) do
+            for id, node in query:iter_captures(tree:root(), buf) do
+              if query.captures[id] == capture_name then
+                local sr, sc, er, ec = node:range()
+                table.insert(regions, {
+                  from = { line = sr + 1, col = sc + 1 },
+                  to = { line = er + 1, col = ec },
+                })
+              end
+            end
+          end
+          return regions
+        end
+      end
+
+      return {
+        custom_textobjects = {
+          k = ts_query_spec('(pair key: (_) @key)', 'key'),
+          v = ts_query_spec('(pair value: (_) @value)', 'value'),
+          f = gen_spec.treesitter({ a = '@function.outer', i = '@function.inner' }),
+          c = gen_spec.treesitter({ a = '@class.outer', i = '@class.inner' }),
+          l = gen_spec.treesitter({ a = '@loop.outer', i = '@loop.inner' }),
+          o = gen_spec.treesitter({ a = '@conditional.outer', i = '@conditional.inner' }),
+        },
+      }
+    end,
+  },
   { 'nvim-mini/mini.bracketed',  version = '*', opts = {} },
   { 'nvim-mini/mini.bufremove',  version = '*', opts = {} },
   { 'nvim-mini/mini.tabline',    version = '*', opts = {} },
