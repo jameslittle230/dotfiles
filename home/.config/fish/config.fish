@@ -90,4 +90,42 @@ function rename-branch
   echo "Branch '$old_branch' has been renamed to '$new_branch' locally and remotely."
 end
 
+fish_color_autosuggestion 6272a4 
+fish_color_cancel ff5555 --reverse 
+fish_color_command 8be9fd 
+fish_color_comment 6272a4 
+fish_color_cwd 50fa7b 
+fish_color_cwd_root red 
+fish_color_end ffb86c 
+fish_color_error ff5555 
+fish_color_escape ff79c6 
+fish_color_history_current --bold 
+fish_color_host bd93f9 
+fish_color_host_remote bd93f9 
+fish_color_keyword ff79c6 
+fish_color_normal f8f8f2 
+fish_color_operator 50fa7b 
+fish_color_option ffb86c 
+fish_color_param bd93f9 
+fish_color_quote f1fa8c 
+fish_color_redirection f8f8f2 
+fish_color_search_match --bold --background=44475a 
+fish_color_selection --bold --background=44475a 
+fish_color_status ff5555 
+fish_color_user 8be9fd 
+fish_color_valid_path --underline=single 
+fish_pager_color_background 
+fish_pager_color_completion f8f8f2 
+fish_pager_color_description 6272a4 
+fish_pager_color_prefix 8be9fd 
+fish_pager_color_progress 6272a4 
+fish_pager_color_secondary_background 
+fish_pager_color_secondary_completion 
+fish_pager_color_secondary_description 
+fish_pager_color_secondary_prefix 
+fish_pager_color_selected_background --background=44475a 
+fish_pager_color_selected_completion f8f8f2 
+fish_pager_color_selected_description 6272a4 
+fish_pager_color_selected_prefix 8be9fd 
+
 test -f ~/.config/fish/config.local.fish && source ~/.config/fish/config.local.fish
