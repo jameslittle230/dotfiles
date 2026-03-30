@@ -1,11 +1,14 @@
 eval (/opt/homebrew/bin/brew shellenv)
+# Prepend ~/.local/bin after brew shellenv so it takes precedence over brew-installed binaries.
+# fish_add_path won't work here: it's a no-op if the path is already in $fish_user_paths,
+# so brew shellenv (which runs first and prepends its own paths) would win.
+# Instead, we filter ~/.local/bin out of wherever it already sits in $PATH, then put it at the front.
+set -gx PATH $HOME/.local/bin (string match -v "$HOME/.local/bin" $PATH)
 status --is-interactive; and nodenv init - fish | source
 zoxide init fish | source
 starship init fish | source
 fzf --fish | source
 source ~/.iterm2_shell_integration.fish
-
-fish_add_path $HOME/.local/bin
 
 set -U fish_greeting "Welcome to Fish. 🐟"
 

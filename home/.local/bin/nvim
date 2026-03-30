@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ~/.local/nvim11/bin/nvim "$@"
