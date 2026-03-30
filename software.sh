@@ -14,12 +14,15 @@ brew install git-delta
 brew install imagemagick
 brew install jq
 brew install lazygit
+brew install ncdu
 brew install neovim
 brew install nodenv
 brew install ripgrep
 brew install starship
 brew install tailscale
 brew install tmux
+brew install tree-sitter
+brew install tree-sitter-cli
 brew install typst
 brew install wget
 brew install yt-dlp
