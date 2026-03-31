@@ -146,7 +146,7 @@ map("n", ",sr", "<Cmd>Telescope resume<CR>", "Resume last search")
 map("n", ",ss", "<Cmd>Telescope lsp_document_symbols<CR>", "Document symbols")
 map("n", ",sS", "<Cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols")
 
-vim.pack.add({ "https://github.com/nvim-lualine/lualine.nvim" })
+vim.pack.add({ "https://github.com/nvim-lualine/lualine.nvim" }, { confirm = false })
 require("lualine").setup({
   options = {
     section_separators = "",
@@ -186,7 +186,7 @@ vim.pack.add({
   "https://github.com/tpope/vim-fugitive",
 })
 
-vim.pack.add({ "https://github.com/folke/which-key.nvim" })
+vim.pack.add({ "https://github.com/folke/which-key.nvim" }, { confirm = false })
 
 require("which-key").setup({
   spec = {
@@ -200,11 +200,11 @@ require("which-key").setup({
   },
 })
 
-vim.pack.add({ "https://github.com/nvim-mini/mini.files" })
+vim.pack.add({ "https://github.com/nvim-mini/mini.files" }, { confirm = false })
 require("mini.files").setup({})
 map("n", ",ef", "<Cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<CR>", "Open file picker")
 
-vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" })
+vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" }, { confirm = false })
 require("gitsigns").setup({})
 map("n", ",gs", "<Cmd>Gitsigns stage_hunk<CR>", "Stage hunk")
 map("n", ",gr", "<Cmd>Gitsigns reset_hunk<CR>", "Reset hunk")
@@ -217,7 +217,7 @@ map("n", ",gB", "<Cmd>Gitsigns blame_line full=true<CR>", "Blame line full")
 map("n", ",gt", "<Cmd>Gitsigns toggle_current_line_blame<CR>", "Toggle line blame")
 map("n", ",gx", "<Cmd>Gitsigns preview_hunk_inline<CR>", "Toggle deleted")
 
-vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
+vim.pack.add({ "https://github.com/stevearc/conform.nvim" }, { confirm = false })
 require("conform").setup({
   formatters_by_ft = {
     javascript = { "prettierd", "prettier", stop_after_first = true },
