@@ -36,7 +36,7 @@ vim.o.wrap = true -- wrap long lines visually
 vim.o.winborder = "rounded"
 
 vim.api.nvim_create_augroup("ReloadConfig", { clear = true })
-vim.api.nvim_create_autocmd("BufWritePost", {
+vim.api.nvim_create_autocmd({ "BufWritePost", "FileChangedShellPost" }, {
   group = "ReloadConfig",
   pattern = vim.fn.expand("~/.config/nvim12") .. "/*",
   callback = function()
