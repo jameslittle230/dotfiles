@@ -216,6 +216,8 @@ map("n", ",gd", "<Cmd>Gitsigns diffthis<CR>", "Diff this")
 map("n", ",gB", "<Cmd>Gitsigns blame_line full=true<CR>", "Blame line full")
 map("n", ",gt", "<Cmd>Gitsigns toggle_current_line_blame<CR>", "Toggle line blame")
 map("n", ",gx", "<Cmd>Gitsigns preview_hunk_inline<CR>", "Toggle deleted")
+map("n", "[g", "<Cmd>Gitsigns prev_hunk<CR>", "Previous hunk")
+map("n", "]g", "<Cmd>Gitsigns next_hunk<CR>", "Previous hunk")
 
 vim.pack.add({ "https://github.com/stevearc/conform.nvim" }, { confirm = false })
 require("conform").setup({
