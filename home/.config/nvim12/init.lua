@@ -23,7 +23,8 @@ vim.o.scrolloff = 8 -- keep 8 lines visible above/below cursor
 vim.o.shiftwidth = 2 -- spaces to use for each indent step
 vim.o.showcmd = true -- show partial command in status line
 vim.o.showmode = false -- don't show mode (e.g. -- INSERT --) in command line
-vim.o.signcolumn = "yes" -- always show the sign column (prevents layout shift) vim.o.smartcase = true -- case-sensitive search if pattern has uppercase
+vim.o.signcolumn = "yes" -- always show the sign column (prevents layout shift)
+vim.o.smartcase = true -- case-sensitive search if pattern has uppercase
 vim.o.splitbelow = true -- new horizontal splits open below
 vim.o.splitright = true -- new vertical splits open to the right
 vim.o.tabstop = 2 -- number of spaces a tab character counts for
@@ -185,6 +186,7 @@ vim.pack.add({
   "https://github.com/tpope/vim-fugitive",
   "https://github.com/m4xshen/hardtime.nvim",
   "https://github.com/folke/which-key.nvim",
+  "https://github.com/akinsho/git-conflict.nvim",
 }, { confirm = false })
 
 require("mini.tabline").setup()
@@ -192,6 +194,7 @@ require("mini.notify").setup()
 require("mini.splitjoin").setup()
 require("nvim-autopairs").setup({})
 require("hardtime").setup()
+require("git-conflict").setup()
 
 require("which-key").setup({
   spec = {
