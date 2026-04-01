@@ -34,6 +34,10 @@ vim.o.undolevels = 1000 -- maximum number of undo steps
 vim.o.updatetime = 50 -- ms of inactivity before writing swap file (affects CursorHold)
 vim.o.wrap = true -- wrap long lines visually
 vim.o.winborder = "rounded"
+vim.o.foldcolumn = "1" -- show fold indicators in the sign column
+vim.o.foldlevel = 99 -- open all folds by default
+vim.o.foldlevelstart = 99 -- open all folds when opening a file
+vim.o.foldenable = true -- enable folding
 
 vim.api.nvim_create_augroup("ReloadConfig", { clear = true })
 vim.api.nvim_create_autocmd({ "BufWritePost", "FileChangedShellPost" }, {
@@ -336,3 +340,11 @@ map("n", "gr", vim.lsp.buf.references, "Go to references")
 map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
 map("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
 map("n", "gt", vim.lsp.buf.type_definition, "Go to type definition")
+
+vim.pack.add({
+  "https://github.com/kevinhwang91/promise-async",
+  "https://github.com/kevinhwang91/nvim-ufo",
+}, { confirm = false })
+require("ufo").setup()
+map("n", "zR", require("ufo").openAllFolds, "Open all folds")
+map("n", "zM", require("ufo").closeAllFolds, "Close all folds")
