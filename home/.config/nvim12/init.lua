@@ -42,10 +42,10 @@ vim.o.foldenable = true -- enable folding
 vim.api.nvim_create_augroup("ReloadConfig", { clear = true })
 vim.api.nvim_create_autocmd({ "BufWritePost", "FileChangedShellPost" }, {
   group = "ReloadConfig",
-  pattern = vim.fn.expand("~/.config/nvim12") .. "/*",
+  pattern = { vim.fn.expand("~/.config/nvim12") .. "/*", vim.fn.expand(".config/nvim12") .. "/*" },
   callback = function()
-    dofile(vim.fn.expand("~/.config/nvim12/init.lua"))
     vim.notify("Reloaded")
+    dofile(vim.fn.expand("~/.config/nvim12/init.lua"))
   end,
 })
 
@@ -92,7 +92,9 @@ vim.cmd.colorscheme("nightfox")
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter" }, { confirm = false })
 
 local function treesitter_try_attach(buf, language)
-  if not vim.treesitter.language.add(language) then return end
+  if not vim.treesitter.language.add(language) then
+    return
+  end
   vim.treesitter.start(buf, language)
   vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 end
@@ -103,7 +105,9 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function(args)
     local buf, filetype = args.buf, args.match
     local language = vim.treesitter.language.get_lang(filetype)
-    if not language then return end
+    if not language then
+      return
+    end
 
     local installed_parsers = require("nvim-treesitter").get_installed("parsers")
 
@@ -213,6 +217,8 @@ vim.pack.add({
   "https://github.com/nvim-mini/mini.tabline",
   "https://github.com/nvim-mini/mini.notify",
   "https://github.com/nvim-mini/mini.splitjoin",
+  "https://github.com/nvim-mini/mini.bracketed",
+  "https://github.com/nvim-mini/mini.move",
   "https://github.com/windwp/nvim-autopairs",
   "https://github.com/kylechui/nvim-surround",
   "https://github.com/tpope/vim-fugitive",
@@ -224,6 +230,18 @@ vim.pack.add({
 require("mini.tabline").setup()
 require("mini.notify").setup()
 require("mini.splitjoin").setup()
+require("mini.bracketed").setup()
+require("mini.move").setup({
+  mappings = {
+    left = "<S-h>",
+    right = "<S-l>",
+    down = "<S-j>",
+    up = "<S-k>",
+  },
+  options = {
+    reindent_linewise = true,
+  },
+})
 require("nvim-autopairs").setup({})
 require("hardtime").setup()
 require("git-conflict").setup()
@@ -348,3 +366,20 @@ vim.pack.add({
 require("ufo").setup()
 map("n", "zR", require("ufo").openAllFolds, "Open all folds")
 map("n", "zM", require("ufo").closeAllFolds, "Close all folds")
+
+vim.pack.add({ "https://github.com/monaqa/dial.nvim" }, { confirm = false })
+local augend = require("dial.augend")
+require("dial.config").augends:register_group({
+  default = {
+    augend.integer.alias.decimal,
+    augend.integer.alias.hex,
+    augend.constant.alias.bool,
+    augend.constant.alias.Bool,
+  },
+})
+map("n", "<C-a>", "<Plug>(dial-increment)", "Increment")
+map("n", "<C-x>", "<Plug>(dial-decrement)", "Decrement")
+map("v", "<C-a>", "<Plug>(dial-increment)", "Increment")
+map("v", "<C-x>", "<Plug>(dial-decrement)", "Decrement")
+map("v", "g<C-a>", "<Plug>(dial-g-increment)", "Increment (sequential)")
+map("v", "g<C-x>", "<Plug>(dial-g-decrement)", "Decrement (sequential)")
