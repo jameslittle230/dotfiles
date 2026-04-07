@@ -39,15 +39,23 @@ vim.o.foldlevel = 99 -- open all folds by default
 vim.o.foldlevelstart = 99 -- open all folds when opening a file
 vim.o.foldenable = true -- enable folding
 
-vim.api.nvim_create_augroup("ReloadConfig", { clear = true })
-vim.api.nvim_create_autocmd({ "BufWritePost", "FileChangedShellPost" }, {
-  group = "ReloadConfig",
-  pattern = { vim.fn.expand("~/.config/nvim12") .. "/*", vim.fn.expand(".config/nvim12") .. "/*" },
-  callback = function()
-    vim.notify("Reloaded")
-    dofile(vim.fn.expand("~/.config/nvim12/init.lua"))
-  end,
-})
+local config_path = vim.fn.expand("~/.config/nvim/init.lua")
+if _G.config_watcher then
+  _G.config_watcher:stop()
+end
+local watcher = vim.uv.new_fs_event()
+_G.config_watcher = watcher
+if watcher then
+  watcher:start(config_path, {}, function(err, _, _)
+    if err then
+      return
+    end
+    vim.schedule(function()
+      dofile(config_path)
+      vim.notify("Config reloaded")
+    end)
+  end)
+end
 
 local default_opts = { noremap = true, silent = true }
 local function map(mode, l, r, opts)
@@ -84,6 +92,8 @@ map("n", ",wc", "<C-w>c", "Close split")
 
 map("n", ",bd", "<Cmd>bd<CR>", "Delete buffer")
 map("n", ",bo", "<Cmd>%bd|e#|bd#<CR>", "Delete other buffers")
+
+map("n", ",n", "<Cmd>noh<CR>", "No Highlight Search")
 
 vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" }, { confirm = false })
 require("nightfox").setup({ options = { styles = { comments = "italic" } } })
@@ -135,6 +145,31 @@ vim.api.nvim_create_autocmd("PackChanged", {
   end,
 })
 
+vim.pack.add({
+  "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
+  "https://github.com/nvim-treesitter/nvim-treesitter-context",
+  "https://github.com/windwp/nvim-ts-autotag",
+}, { confirm = false })
+require("nvim-treesitter-textobjects").setup({})
+require("nvim-ts-autotag").setup()
+local ts_select = require("nvim-treesitter-textobjects.select")
+local function tso(key, query, desc)
+  map({ "x", "o" }, key, function()
+    ts_select.select_textobject(query, "textobjects")
+  end, desc)
+end
+tso("af", "@function.outer", "outer function")
+tso("if", "@function.inner", "inner function")
+tso("aa", "@assignment.outer", "outer assignment")
+tso("ia", "@assignment.inner", "inner assignment")
+tso("ab", "@block.outer", "outer block")
+tso("ib", "@block.inner", "inner block")
+tso("ac", "@comment.outer", "outer comment")
+tso("ic", "@comment.inner", "inner comment")
+tso("ap", "@parameter.outer", "outer parameter")
+tso("ip", "@parameter.inner", "inner parameter")
+require("treesitter-context").setup({ max_lines = 3, trim_scope = "outer" })
+
 vim.pack.add({ "https://github.com/saghen/blink.cmp" }, { confirm = false })
 require("blink.cmp").setup({
   cmdline = { enabled = false },
@@ -170,7 +205,7 @@ require("telescope").setup({
       hidden = true,
       find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
     },
-    live_grep = { additional_args = { "--hidden" } },
+    live_grep = { additional_args = { "--hidden", "--glob", "!.git/*" } },
   },
 })
 
@@ -194,6 +229,15 @@ require("lualine").setup({
     lualine_c = { { "filename", path = 1 } },
     lualine_x = {
       { "lsp_status", ignore_lsp = { "null-ls" } },
+      {
+        function()
+          local buf = vim.api.nvim_get_current_buf()
+          if vim.treesitter.highlighter.active[buf] then
+            return "T"
+          end
+          return ""
+        end,
+      },
       { "filetype", icons_enabled = false },
     },
     lualine_y = { "searchcount", "progress" },
@@ -215,20 +259,17 @@ vim.diagnostic.config({
 
 vim.pack.add({
   "https://github.com/nvim-mini/mini.tabline",
-  "https://github.com/nvim-mini/mini.notify",
-  "https://github.com/nvim-mini/mini.splitjoin",
+  "https://github.com/nvim-mini/mini.splitjoin", -- gS
   "https://github.com/nvim-mini/mini.bracketed",
   "https://github.com/nvim-mini/mini.move",
   "https://github.com/windwp/nvim-autopairs",
   "https://github.com/kylechui/nvim-surround",
   "https://github.com/tpope/vim-fugitive",
-  "https://github.com/m4xshen/hardtime.nvim",
   "https://github.com/folke/which-key.nvim",
   "https://github.com/akinsho/git-conflict.nvim",
 }, { confirm = false })
 
 require("mini.tabline").setup()
-require("mini.notify").setup()
 require("mini.splitjoin").setup()
 require("mini.bracketed").setup()
 require("mini.move").setup({
@@ -243,8 +284,7 @@ require("mini.move").setup({
   },
 })
 require("nvim-autopairs").setup({})
-require("hardtime").setup()
-require("git-conflict").setup()
+require("git-conflict").setup({})
 
 require("which-key").setup({
   spec = {
@@ -260,6 +300,12 @@ require("which-key").setup({
 
 vim.pack.add({ "https://github.com/nvim-mini/mini.files" }, { confirm = false })
 require("mini.files").setup({})
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TelescopeFindPre",
+  callback = function()
+    require("mini.files").close()
+  end,
+})
 map("n", ",ef", "<Cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<CR>", "Open file picker")
 
 vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" }, { confirm = false })
@@ -290,6 +336,8 @@ require("conform").setup({
     lua = { "stylua", lsp_format = "never" },
     python = { "black" },
     rust = { "rustfmt", lsp_format = "fallback" },
+    bash = { "shfmt", lsp_format = "fallback" },
+    ["_"] = { "trim_whitespace" },
   },
   formatters = {
     stylua = {
@@ -363,7 +411,11 @@ vim.pack.add({
   "https://github.com/kevinhwang91/promise-async",
   "https://github.com/kevinhwang91/nvim-ufo",
 }, { confirm = false })
-require("ufo").setup()
+require("ufo").setup({
+  provider_selector = function()
+    return { "lsp", "indent" }
+  end,
+})
 map("n", "zR", require("ufo").openAllFolds, "Open all folds")
 map("n", "zM", require("ufo").closeAllFolds, "Close all folds")
 
