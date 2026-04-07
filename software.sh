@@ -15,14 +15,7 @@ brew install imagemagick
 brew install jq
 brew install lazygit
 brew install ncdu
-brew install neovim  # 0.12, used as nvim12
-
-# Install neovim 0.11 as the default nvim
-NVIM11_VERSION="0.11.7"
-NVIM11_ARCH="$(uname -m)"
-mkdir -p ~/.local/nvim11
-curl -fL "https://github.com/neovim/neovim/releases/download/v${NVIM11_VERSION}/nvim-macos-${NVIM11_ARCH}.tar.gz" \
-  | tar xz -C ~/.local/nvim11 --strip-components=1
+brew install neovim
 brew install nodenv
 brew install ripgrep
 brew install starship
