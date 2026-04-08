@@ -39,6 +39,10 @@ vim.o.foldlevel = 99 -- open all folds by default
 vim.o.foldlevelstart = 99 -- open all folds when opening a file
 vim.o.foldenable = true -- enable folding
 
+require("vim._core.ui2").enable({})
+vim.cmd("packadd nvim.difftool")
+vim.cmd("packadd nvim.undotree")
+
 local config_path = vim.fn.expand("~/.config/nvim/init.lua")
 if _G.config_watcher then
   _G.config_watcher:stop()
