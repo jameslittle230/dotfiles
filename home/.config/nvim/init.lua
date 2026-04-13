@@ -198,28 +198,30 @@ require("blink.cmp").setup({
 })
 
 vim.pack.add({
-  "https://github.com/nvim-lua/plenary.nvim", -- library dependency
   "https://github.com/nvim-tree/nvim-web-devicons", -- icons (nerd font)
-  "https://github.com/nvim-telescope/telescope.nvim", -- the fuzzy finder
+  "https://github.com/ibhagwan/fzf-lua", -- the fuzzy finder
 }, { confirm = false })
 
-require("telescope").setup({
-  pickers = {
-    find_files = {
-      hidden = true,
-      find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
-    },
-    live_grep = { additional_args = { "--hidden", "--glob", "!.git/*" } },
+require("fzf-lua").setup({
+  winopts = {
+    on_create = function()
+      require("mini.files").close()
+    end,
+  },
+  files = { hidden = true },
+  grep = {
+    hidden = true,
+    rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 -g '!.git' -e",
   },
 })
 
-map("n", ",s", "<Cmd>Telescope<CR>", "Telescope")
-map("n", ",sf", "<Cmd>Telescope find_files<CR>", "Find files")
-map("n", ",sg", "<Cmd>Telescope live_grep<CR>", "Live grep")
-map("n", ",sb", "<Cmd>Telescope buffers<CR>", "Find buffers")
-map("n", ",sr", "<Cmd>Telescope resume<CR>", "Resume last search")
-map("n", ",ss", "<Cmd>Telescope lsp_document_symbols<CR>", "Document symbols")
-map("n", ",sS", "<Cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols")
+map("n", ",s", "<Cmd>FzfLua builtin<CR>", "FzfLua")
+map("n", ",sf", "<Cmd>FzfLua files<CR>", "Find files")
+map("n", ",sg", "<Cmd>FzfLua live_grep<CR>", "Live grep")
+map("n", ",sb", "<Cmd>FzfLua buffers<CR>", "Find buffers")
+map("n", ",sr", "<Cmd>FzfLua resume<CR>", "Resume last search")
+map("n", ",ss", "<Cmd>FzfLua lsp_document_symbols<CR>", "Document symbols")
+map("n", ",sS", "<Cmd>FzfLua lsp_workspace_symbols<CR>", "Workspace symbols")
 
 vim.pack.add({ "https://github.com/nvim-lualine/lualine.nvim" }, { confirm = false })
 require("lualine").setup({
@@ -298,18 +300,21 @@ require("which-key").setup({
     { ",g", group = "Git" },
     { ",l", group = "LSP" },
     { ",d", group = "Diagnostics" },
+    { ",D", group = "Debug" },
     { ",e", group = "Explorer" },
   },
 })
 
-vim.pack.add({ "https://github.com/nvim-mini/mini.files" }, { confirm = false })
-require("mini.files").setup({})
-vim.api.nvim_create_autocmd("User", {
-  pattern = "TelescopeFindPre",
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
   callback = function()
-    require("mini.files").close()
+    vim.opt_local.linebreak = true
+    vim.opt_local.conceallevel = 2
   end,
 })
+
+vim.pack.add({ "https://github.com/nvim-mini/mini.files" }, { confirm = false })
+require("mini.files").setup({})
 map("n", ",ef", "<Cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<CR>", "Open file picker")
 
 vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" }, { confirm = false })
@@ -439,3 +444,71 @@ map("v", "<C-a>", "<Plug>(dial-increment)", "Increment")
 map("v", "<C-x>", "<Plug>(dial-decrement)", "Decrement")
 map("v", "g<C-a>", "<Plug>(dial-g-increment)", "Increment (sequential)")
 map("v", "g<C-x>", "<Plug>(dial-g-decrement)", "Decrement (sequential)")
+
+vim.pack.add({
+  {
+    src = "https://github.com/obsidian-nvim/obsidian.nvim",
+    version = vim.version.range("*"),
+  },
+})
+require("obsidian").setup({
+  legacy_commands = false,
+  workspaces = {
+    { name = "jil-notes", path = "~/Documents/jil-notes/" },
+  },
+})
+
+vim.pack.add({
+  "https://github.com/mfussenegger/nvim-dap",
+  "https://github.com/nvim-neotest/nvim-nio",
+  "https://github.com/rcarriga/nvim-dap-ui",
+}, { confirm = false })
+
+local dap = require("dap")
+local dapui = require("dapui")
+
+dapui.setup()
+
+-- auto open/close UI with debug sessions
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
+
+-- arrow keys for stepping — only active while a debug session is running
+dap.listeners.after.event_initialized["dap_step_keymaps"] = function()
+  vim.keymap.set("n", "<Down>", dap.step_over, { desc = "Debug: Step over" })
+  vim.keymap.set("n", "<Right>", dap.step_into, { desc = "Debug: Step into" })
+  vim.keymap.set("n", "<Left>", dap.step_out, { desc = "Debug: Step out" })
+  vim.keymap.set("n", "<Up>", dap.restart_frame, { desc = "Debug: Restart frame" })
+end
+
+local function remove_step_keymaps()
+  pcall(vim.keymap.del, "n", "<Down>")
+  pcall(vim.keymap.del, "n", "<Right>")
+  pcall(vim.keymap.del, "n", "<Left>")
+  pcall(vim.keymap.del, "n", "<Up>")
+end
+
+dap.listeners.before.event_terminated["dap_step_keymaps"] = remove_step_keymaps
+dap.listeners.before.event_exited["dap_step_keymaps"] = remove_step_keymaps
+
+map("n", ",Dd", dap.continue, "Debug: Continue / Start")
+
+-- ,D group: breakpoints, UI, REPL, eval
+map("n", ",Db", dap.toggle_breakpoint, "Toggle breakpoint")
+map("n", ",DB", function()
+  dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+end, "Conditional breakpoint")
+map("n", ",Du", dapui.toggle, "Toggle DAP UI")
+map("n", ",Dr", dap.repl.toggle, "Toggle REPL")
+map("n", ",Dl", dap.run_last, "Run last")
+map({ "n", "v" }, ",De", dapui.eval, "Eval expression")
