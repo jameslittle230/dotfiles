@@ -446,19 +446,6 @@ map("v", "g<C-a>", "<Plug>(dial-g-increment)", "Increment (sequential)")
 map("v", "g<C-x>", "<Plug>(dial-g-decrement)", "Decrement (sequential)")
 
 vim.pack.add({
-  {
-    src = "https://github.com/obsidian-nvim/obsidian.nvim",
-    version = vim.version.range("*"),
-  },
-})
-require("obsidian").setup({
-  legacy_commands = false,
-  workspaces = {
-    { name = "jil-notes", path = "~/Documents/jil-notes/" },
-  },
-})
-
-vim.pack.add({
   "https://github.com/mfussenegger/nvim-dap",
   "https://github.com/nvim-neotest/nvim-nio",
   "https://github.com/rcarriga/nvim-dap-ui",
@@ -512,3 +499,7 @@ map("n", ",Du", dapui.toggle, "Toggle DAP UI")
 map("n", ",Dr", dap.repl.toggle, "Toggle REPL")
 map("n", ",Dl", dap.run_last, "Run last")
 map({ "n", "v" }, ",De", dapui.eval, "Eval expression")
+
+-- Machine-local configuration (optional)
+local ok, _ = pcall(require, "local")
+if not ok then end
