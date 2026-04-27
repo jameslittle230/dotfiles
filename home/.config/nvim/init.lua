@@ -39,27 +39,8 @@ vim.o.foldlevel = 99 -- open all folds by default
 vim.o.foldlevelstart = 99 -- open all folds when opening a file
 vim.o.foldenable = true -- enable folding
 
-require("vim._core.ui2").enable({})
 vim.cmd("packadd nvim.difftool")
 vim.cmd("packadd nvim.undotree")
-
-local config_path = vim.fn.expand("~/.config/nvim/init.lua")
-if _G.config_watcher then
-  _G.config_watcher:stop()
-end
-local watcher = vim.uv.new_fs_event()
-_G.config_watcher = watcher
-if watcher then
-  watcher:start(config_path, {}, function(err, _, _)
-    if err then
-      return
-    end
-    vim.schedule(function()
-      dofile(config_path)
-      vim.notify("Config reloaded")
-    end)
-  end)
-end
 
 local default_opts = { noremap = true, silent = true }
 local function map(mode, l, r, opts)
@@ -502,4 +483,5 @@ map({ "n", "v" }, ",De", dapui.eval, "Eval expression")
 
 -- Machine-local configuration (optional)
 local ok, _ = pcall(require, "local")
-if not ok then end
+if not ok then
+end
