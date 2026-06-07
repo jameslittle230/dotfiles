@@ -254,6 +254,7 @@ map("n", ",dl", function()
 end, "Toggle LSP lines")
 
 vim.pack.add({
+  "https://github.com/nvim-mini/mini.notify",
   "https://github.com/nvim-mini/mini.tabline",
   "https://github.com/nvim-mini/mini.splitjoin", -- gS
   "https://github.com/nvim-mini/mini.bracketed",
@@ -279,6 +280,8 @@ require("mini.move").setup({
     reindent_linewise = true,
   },
 })
+require("mini.notify").setup()
+vim.lsp.handlers["$/progress"] = function() end
 require("nvim-autopairs").setup({})
 require("git-conflict").setup({})
 
