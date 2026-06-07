@@ -232,6 +232,9 @@ require("lualine").setup({
   },
 })
 
+vim.pack.add({ "https://git.sr.ht/~whynothugo/lsp_lines.nvim" }, { confirm = false })
+require("lsp_lines").setup()
+
 vim.diagnostic.config({
   signs = {
     text = {
@@ -241,8 +244,14 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = " ",
     },
   },
-  virtual_text = true, -- show inline diagnostics
+  virtual_text = false,
+  virtual_lines = true,
 })
+
+map("n", ",dl", function()
+  local vl = vim.diagnostic.config().virtual_lines ~= false
+  vim.diagnostic.config({ virtual_lines = not vl, virtual_text = vl })
+end, "Toggle LSP lines")
 
 vim.pack.add({
   "https://github.com/nvim-mini/mini.tabline",
@@ -281,6 +290,7 @@ require("which-key").setup({
     { ",g", group = "Git" },
     { ",l", group = "LSP" },
     { ",d", group = "Diagnostics" },
+    { ",dl", desc = "Toggle LSP lines" },
     { ",D", group = "Debug" },
     { ",e", group = "Explorer" },
   },
