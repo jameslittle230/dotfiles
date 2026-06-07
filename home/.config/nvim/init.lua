@@ -296,6 +296,7 @@ require("which-key").setup({
     { ",dl", desc = "Toggle LSP lines" },
     { ",D", group = "Debug" },
     { ",e", group = "Explorer" },
+    { ",z", group = "vim.pack" },
   },
 })
 
@@ -393,7 +394,7 @@ vim.pack.add({
 require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
-  ensure_installed = vim.tbl_keys(lsp_servers),
+  ensure_installed = vim.list_extend(vim.tbl_keys(lsp_servers), { "js-debug-adapter" }),
 })
 
 for server, config in pairs(lsp_servers) do
@@ -493,6 +494,24 @@ map("n", ",Du", dapui.toggle, "Toggle DAP UI")
 map("n", ",Dr", dap.repl.toggle, "Toggle REPL")
 map("n", ",Dl", dap.run_last, "Run last")
 map({ "n", "v" }, ",De", dapui.eval, "Eval expression")
+
+dap.adapters["pwa-node"] = {
+  type = "server",
+  host = "localhost",
+  port = "${port}",
+  executable = {
+    command = "node",
+    args = {
+      vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js",
+      "${port}",
+    },
+  },
+}
+
+vim.pack.add({ "https://github.com/nemanjamalesija/ts-expand-hover.nvim" }, { confirm = false })
+require("ts_expand_hover").setup({ float = { border = "rounded" } })
+
+map("n", ",zz", vim.pack.update, "Update plugins")
 
 -- Machine-local configuration (optional)
 local ok, _ = pcall(require, "local")
