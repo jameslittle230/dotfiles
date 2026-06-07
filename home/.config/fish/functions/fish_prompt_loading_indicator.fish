@@ -13,13 +13,11 @@ function fish_prompt_loading_indicator
 
     echo
 
-    # Prompt character — reliable here since we're synchronous
     if test $last_status -eq 0
         set_color $fish_color_operator
-        echo -n "❯ "
     else
         set_color $fish_color_error
-        echo -n "✘ "
     end
+    echo -n "❯ "
     set_color normal
 end

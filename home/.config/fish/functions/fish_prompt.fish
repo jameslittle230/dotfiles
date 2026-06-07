@@ -25,13 +25,11 @@ function fish_prompt
 
     echo
 
-    # Prompt character — chevron on success, x on failure
     if test $last_status -eq 0
         set_color $fish_color_operator
-        echo -n "❯ "
     else
         set_color $fish_color_error
-        echo -n "✘ "
     end
+    echo -n "❯ "
     set_color normal
 end
