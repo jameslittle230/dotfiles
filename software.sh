@@ -18,7 +18,6 @@ brew install ncdu
 brew install neovim
 brew install nodenv
 brew install ripgrep
-brew install starship
 brew install tailscale
 brew install tmux
 brew install tree-sitter
