@@ -1,13 +1,50 @@
-eval (/opt/homebrew/bin/brew shellenv)
-# Prepend ~/.local/bin after brew shellenv so it takes precedence over brew-installed binaries.
+# Hardcoded to avoid spawning the brew Ruby process (~34ms) on every shell start.
+# Assumes Apple Silicon (/opt/homebrew). Update if running on Intel (/usr/local).
+set -gx HOMEBREW_PREFIX /opt/homebrew
+set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
+set -gx HOMEBREW_REPOSITORY /opt/homebrew
+fish_add_path --global --move --path /opt/homebrew/bin /opt/homebrew/sbin
+
+# Prepend ~/.local/bin so it takes precedence over brew-installed binaries.
 # fish_add_path won't work here: it's a no-op if the path is already in $fish_user_paths,
-# so brew shellenv (which runs first and prepends its own paths) would win.
-# Instead, we filter ~/.local/bin out of wherever it already sits in $PATH, then put it at the front.
+# so the brew paths added above would win. Instead, filter it out and prepend it directly.
 set -gx PATH $HOME/.local/bin (string match -v "$HOME/.local/bin" $PATH)
-status --is-interactive; and nodenv init - fish | source
-zoxide init fish | source
-starship init fish | source
-fzf --fish | source
+
+# nodenv: add shims to PATH eagerly so node/npm/etc work immediately,
+# but defer the subprocess until the first time nodenv itself is called.
+fish_add_path --global --move --path $HOME/.nodenv/shims
+if status --is-interactive; and command -q nodenv
+    function nodenv
+        functions -e nodenv
+        command nodenv init - fish | source
+        nodenv $argv
+    end
+end
+
+# Cache init scripts to avoid spawning subprocesses on every shell start.
+# To regenerate after upgrading a tool: rm ~/.cache/fish/<tool>_init.fish
+set -l _fish_cache ~/.cache/fish
+
+set -l _cache $_fish_cache/zoxide_init.fish
+if not test -f $_cache; mkdir -p $_fish_cache; zoxide init fish > $_cache; end
+source $_cache
+
+set -l _cache $_fish_cache/fzf_init.fish
+if not test -f $_cache; mkdir -p $_fish_cache; fzf --fish > $_cache; end
+source $_cache
+# Only run fish_prompt async — fish_right_prompt stays synchronous so that
+# jobs count can read the parent shell's actual job table.
+set -g async_prompt_functions fish_prompt
+
+# Capture last exit status for the async prompt. We can't use
+# $__async_prompt_last_pipestatus because fish-async-prompt shadows it with a
+# local via VAR=val before spawning, so the background process receives 0.
+# This variable is not involved in that shadowing.
+function __prompt_capture_status --on-event fish_postexec
+    set -g __prompt_last_status $status
+end
+set -g async_prompt_inherit_variables CMD_DURATION fish_bind_mode SHLVL __prompt_last_status
+
 source ~/.iterm2_shell_integration.fish
 
 set -U fish_greeting "Welcome to Fish. 🐟"
@@ -97,7 +134,7 @@ set -g fish_color_autosuggestion 6272a4
 set -g fish_color_cancel ff5555 --reverse
 set -g fish_color_command 8be9fd
 set -g fish_color_comment 6272a4
-set -g fish_color_cwd 50fa7b
+set -g fish_color_cwd 8be9fd
 set -g fish_color_cwd_root red
 set -g fish_color_end ffb86c
 set -g fish_color_error ff5555
