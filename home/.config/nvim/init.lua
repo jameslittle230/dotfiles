@@ -6,7 +6,6 @@ vim.g.loaded_netrwPlugin = 1 -- disable netrw plugin
 vim.o.autoread = true -- reload files changed outside of neovim
 vim.o.breakindent = true -- wrapped lines continue visually indented
 vim.o.clipboard = "unnamedplus" -- use system clipboard for yank/paste
-vim.o.cursorline = true -- highlight the line the cursor is on
 vim.o.expandtab = true -- insert spaces instead of tabs
 vim.o.history = 1000 -- number of commands to keep in history
 vim.o.hlsearch = true -- highlight all search matches
@@ -14,7 +13,7 @@ vim.o.ignorecase = true -- ignore case when searching
 vim.o.inccommand = "split" -- preview substitutions live in a split
 vim.o.laststatus = 2 -- always show the status line
 vim.o.list = true -- show invisible characters
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" } -- symbols for invisible characters
+vim.opt.listchars = { trail = "·", nbsp = "␣" } -- symbols for invisible characters
 vim.o.mouse = "a" -- enable mouse support in all modes
 vim.o.number = true -- show absolute line numbers
 vim.o.relativenumber = true -- show relative line numbers
@@ -69,6 +68,7 @@ map("n", "<C-S-l>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Wid
 
 map("n", "[p", '<Cmd>exe "put! " . v:register<CR>', "Paste Above")
 map("n", "]p", '<Cmd>exe "put "  . v:register<CR>', "Paste Below")
+map("x", "p", '"_dP', { desc = "Paste without yanking" })
 
 map("n", ",wv", ":vsplit<CR>", "Split vertical")
 map("n", ",wh", ":split<CR>", "Split horizontal")
@@ -78,7 +78,9 @@ map("n", ",wc", "<C-w>c", "Close split")
 map("n", ",bd", "<Cmd>bd<CR>", "Delete buffer")
 map("n", ",bo", "<Cmd>%bd|e#|bd#<CR>", "Delete other buffers")
 
-map("n", ",n", "<Cmd>noh<CR>", "No Highlight Search")
+map("n", "<Esc>", "<Cmd>noh<CR>", { desc = "Clear search highlight" })
+
+vim.keymap.set("v", "<Leader>es", "<Cmd>'<,'>sort<CR>", { desc = "Sort selection" })
 
 vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" }, { confirm = false })
 require("nightfox").setup({ options = { styles = { comments = "italic" } } })
@@ -95,6 +97,16 @@ local function treesitter_try_attach(buf, language)
 end
 
 local available_parsers = require("nvim-treesitter").get_available()
+
+local ensure_ts_installed = { "bash", "json", "lua", "markdown", "markdown_inline", "python", "yaml" }
+do
+  local installed = require("nvim-treesitter").get_installed("parsers")
+  for _, lang in ipairs(ensure_ts_installed) do
+    if not vim.tbl_contains(installed, lang) then
+      require("nvim-treesitter").install(lang)
+    end
+  end
+end
 
 vim.api.nvim_create_autocmd("FileType", {
   callback = function(args)
@@ -309,7 +321,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.pack.add({ "https://github.com/nvim-mini/mini.files" }, { confirm = false })
-require("mini.files").setup({})
+require("mini.files").setup({ options = { use_as_default_explorer = false } })
 map("n", ",ef", "<Cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<CR>", "Open file picker")
 
 vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" }, { confirm = false })
@@ -352,7 +364,7 @@ require("conform").setup({
     if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
       return
     end
-    return { timeout_ms = 500, lsp_fallback = false }
+    return { timeout_ms = 500 }
   end,
 })
 
@@ -401,6 +413,21 @@ for server, config in pairs(lsp_servers) do
   vim.lsp.config(server, { settings = config })
 end
 
+map("n", ",lf", function()
+  local names = vim.tbl_map(function(f)
+    return f.name
+  end, require("conform").list_formatters(0))
+  require("conform").format({ timeout_ms = 500 }, function(err, did_change)
+    local suffix = #names > 0 and " (" .. table.concat(names, ", ") .. ")" or ""
+    if err then
+      vim.notify("Format error: " .. tostring(err), vim.log.levels.ERROR)
+    elseif did_change then
+      vim.notify("Formatted" .. suffix)
+    else
+      vim.notify("Already formatted" .. suffix)
+    end
+  end)
+end, "Format file")
 map("n", ",lr", vim.lsp.buf.rename, "Rename symbol")
 map("n", ",la", vim.lsp.buf.code_action, "Code actions")
 map("n", ",dd", vim.diagnostic.open_float, "Show diagnostics")
