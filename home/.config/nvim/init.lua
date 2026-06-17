@@ -28,6 +28,7 @@ vim.o.splitbelow = true -- new horizontal splits open below
 vim.o.splitright = true -- new vertical splits open to the right
 vim.o.tabstop = 2 -- number of spaces a tab character counts for
 vim.o.textwidth = 80 -- wrap text at 80 characters
+vim.o.colorcolumn = "+1" -- visual guide at textwidth+1
 vim.o.undofile = true -- persist undo history across sessions
 vim.o.undolevels = 1000 -- maximum number of undo steps
 vim.o.updatetime = 50 -- ms of inactivity before writing swap file (affects CursorHold)
@@ -38,6 +39,7 @@ vim.o.foldlevel = 99 -- open all folds by default
 vim.o.foldlevelstart = 99 -- open all folds when opening a file
 vim.o.foldenable = true -- enable folding
 
+-- vendored locally under pack/*/opt — not managed via vim.pack
 vim.cmd("packadd nvim.difftool")
 vim.cmd("packadd nvim.undotree")
 
@@ -53,8 +55,8 @@ end
 map("i", "jk", "<Esc>") -- exit insert mode with jk
 map("v", "<", "<gv") -- stay in visual mode after dedenting
 map("v", ">", ">gv") -- stay in visual mode after indenting
-map("n", "j", "gj") -- move down by visual line (respects wrap)
-map("n", "k", "gk") -- move up by visual line (respects wrap)
+map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true }) -- move down by visual line (respects wrap), unless counted
+map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true }) -- move up by visual line (respects wrap), unless counted
 
 map("n", "<C-j>", "<C-w>j") -- move to split below
 map("n", "<C-k>", "<C-w>k") -- move to split above
@@ -70,21 +72,34 @@ map("n", "[p", '<Cmd>exe "put! " . v:register<CR>', "Paste Above")
 map("n", "]p", '<Cmd>exe "put "  . v:register<CR>', "Paste Below")
 map("x", "p", '"_dP', { desc = "Paste without yanking" })
 
+map("n", "D", '"_D', { desc = "Delete to end of line without yanking" })
+map("n", "X", '"_X', { desc = "Delete char before cursor without yanking" })
+map("n", "C", '"_C', { desc = "Change to end of line without yanking" })
+
 map("n", ",wv", ":vsplit<CR>", "Split vertical")
 map("n", ",wh", ":split<CR>", "Split horizontal")
 map("n", ",w=", "<C-w>=", { desc = "Equal width" })
 map("n", ",wc", "<C-w>c", "Close split")
 
 map("n", ",bd", "<Cmd>bd<CR>", "Delete buffer")
-map("n", ",bo", "<Cmd>%bd|e#|bd#<CR>", "Delete other buffers")
+map("n", ",bo", function()
+  local current = vim.api.nvim_get_current_buf()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if buf ~= current and vim.bo[buf].buflisted and not vim.bo[buf].modified then
+      vim.api.nvim_buf_delete(buf, {})
+    end
+  end
+end, "Delete other buffers")
 
 map("n", "<Esc>", "<Cmd>noh<CR>", { desc = "Clear search highlight" })
 
 vim.keymap.set("v", "<Leader>es", "<Cmd>'<,'>sort<CR>", { desc = "Sort selection" })
 
-vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" }, { confirm = false })
-require("nightfox").setup({ options = { styles = { comments = "italic" } } })
-vim.cmd.colorscheme("nightfox")
+-- vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" }, { confirm = false })
+-- require("nightfox").setup({ options = { styles = { comments = "italic" } } })
+-- vim.cmd.colorscheme("nightfox")
+vim.pack.add({ "https://git.sr.ht/~p00f/alabaster.nvim" }, { confirm = false })
+vim.cmd.colorscheme("alabaster")
 
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter" }, { confirm = false })
 
@@ -146,9 +161,95 @@ vim.pack.add({
   "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
   "https://github.com/nvim-treesitter/nvim-treesitter-context",
   "https://github.com/windwp/nvim-ts-autotag",
+  "https://github.com/folke/ts-comments.nvim",
+  "https://github.com/numToStr/Comment.nvim",
 }, { confirm = false })
 require("nvim-treesitter-textobjects").setup({})
 require("nvim-ts-autotag").setup()
+require("ts-comments").setup()
+require("Comment").setup()
+
+-- wrap `text` into a comment, reflowed to 'textwidth'. For block-style
+-- commentstrings (e.g. "/* %s */") this produces a /* ... */ block with
+-- " * " continuation lines; otherwise each wrapped line is prefixed with
+-- the line-comment leader (e.g. "// ")
+local function format_as_comment(text)
+  local textwidth = vim.bo.textwidth > 0 and vim.bo.textwidth or 79
+  local cs = vim.bo.commentstring
+  local left, right = cs:match("^(.-)%%s(.*)$")
+  left, right = vim.trim(left or "/*"), vim.trim(right or "*/")
+
+  local function wrap(words_text, width)
+    local out = {}
+    for word in words_text:gmatch("%S+") do
+      if #out == 0 or #out[#out] + 1 + #word > width then
+        table.insert(out, word)
+      else
+        out[#out] = out[#out] .. " " .. word
+      end
+    end
+    return out
+  end
+
+  if right == "" then
+    local prefix = left .. " "
+    local out = {}
+    for _, w in ipairs(wrap(text, textwidth - #prefix)) do
+      table.insert(out, prefix .. w)
+    end
+    return out
+  end
+
+  if #text + #left + #right + 2 <= textwidth then
+    return { left .. " " .. text .. " " .. right }
+  end
+
+  local out = {}
+  for i, w in ipairs(wrap(text, textwidth - 3)) do
+    table.insert(out, (i == 1 and (left .. " ") or " * ") .. w)
+  end
+  table.insert(out, " " .. right)
+  return out
+end
+
+-- gb on a selection: if it's a /* ... */ block comment, strip the wrapper and
+-- the leading "* " continuation markers; otherwise wrap the selected text
+-- into a new comment (reflowed to 'textwidth')
+local function smart_block_comment_toggle()
+  local start_line = vim.fn.line("'<")
+  local end_line = vim.fn.line("'>")
+  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+  local first = vim.trim(lines[1])
+  local last = vim.trim(lines[#lines])
+  if not (first:match("^/%*") and last:match("%*+/$")) then
+    local text = table.concat(
+      vim.tbl_map(function(l)
+        return vim.trim(l)
+      end, lines),
+      " "
+    )
+    vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, format_as_comment(text))
+    return
+  end
+
+  lines[1] = lines[1]:gsub("^(%s*)/%*%s?", "%1")
+  lines[#lines] = lines[#lines]:gsub("%s*%*+/%s*$", "")
+  for i, line in ipairs(lines) do
+    lines[i] = line:gsub("^%s*%*%s?", "")
+  end
+
+  local result = {}
+  for i, line in ipairs(lines) do
+    if not ((i == 1 or i == #lines) and #lines > 1 and line:match("^%s*$")) then
+      table.insert(result, line)
+    end
+  end
+
+  vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, result)
+end
+map("x", "gb", smart_block_comment_toggle, "Toggle block comment, wrapping/unwrapping to textwidth")
+
 local ts_select = require("nvim-treesitter-textobjects.select")
 local function tso(key, query, desc)
   map({ "x", "o" }, key, function()
@@ -256,8 +357,8 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = " ",
     },
   },
-  virtual_text = false,
-  virtual_lines = true,
+  virtual_text = true,
+  virtual_lines = false,
 })
 
 map("n", ",dl", function()
@@ -273,14 +374,36 @@ vim.pack.add({
   "https://github.com/nvim-mini/mini.move",
   "https://github.com/windwp/nvim-autopairs",
   "https://github.com/kylechui/nvim-surround",
+  "https://github.com/gregorias/nvim-surround-wk",
   "https://github.com/tpope/vim-fugitive",
   "https://github.com/folke/which-key.nvim",
   "https://github.com/akinsho/git-conflict.nvim",
 }, { confirm = false })
 
+-- keep non-file buffers (directories, quickfix) out of the tabline
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function(args)
+    vim.bo[args.buf].buflisted = false
+  end,
+})
+vim.api.nvim_create_autocmd({ "BufAdd", "BufEnter" }, {
+  callback = function(args)
+    if vim.fn.isdirectory(vim.api.nvim_buf_get_name(args.buf)) == 1 then
+      vim.bo[args.buf].buflisted = false
+    end
+  end,
+})
+
 require("mini.tabline").setup()
 require("mini.splitjoin").setup()
 require("mini.bracketed").setup()
+map("n", "]]", function()
+  require("mini.bracketed").buffer("forward")
+end, "Next buffer")
+map("n", "[[", function()
+  require("mini.bracketed").buffer("backward")
+end, "Previous buffer")
 require("mini.move").setup({
   mappings = {
     left = "<S-h>",
@@ -292,8 +415,7 @@ require("mini.move").setup({
     reindent_linewise = true,
   },
 })
-require("mini.notify").setup()
-vim.lsp.handlers["$/progress"] = function() end
+require("mini.notify").setup({ lsp_progress = { enable = false } })
 require("nvim-autopairs").setup({})
 require("git-conflict").setup({})
 
@@ -312,11 +434,83 @@ require("which-key").setup({
   },
 })
 
+require("nvim-surround").setup({
+  surrounds = {
+    ["%"] = { -- e.g. ysiw% on "foo" -> {% foo %}
+      add = { "{% ", " %}" },
+      find = function()
+        return require("nvim-surround.config").get_selection({ pattern = "{%%.-%%}" })
+      end,
+      delete = "^({%%%s-)().-(%s-%%})()$",
+    },
+    ["m"] = { -- e.g. ysiwm on "foo" -> {% tag %}foo{% /tag %}
+      add = function()
+        local config = require("nvim-surround.config")
+        local tag = config.get_input("Markdoc tag: ")
+        if not tag then
+          return nil
+        end
+        return { { "{% " .. tag .. " %}" }, { "{% /" .. tag .. " %}" } }
+      end,
+      find = function()
+        return require("nvim-surround.config").get_selection({ pattern = "{%%.-%%}.-{%%.-%%}" })
+      end,
+      delete = "^({%%.-%%})().-({%%.-%%})()$",
+    },
+    ["|"] = { -- e.g. ysiw| on "foo" -> |foo|
+      add = { "|", "|" },
+      find = function()
+        return require("nvim-surround.config").get_selection({ pattern = "|.-|" })
+      end,
+      delete = "^(|)().-(|)()$",
+    },
+    ["L"] = { -- selection becomes the URL, e.g. Vy then SL -> [text](url)
+      add = function()
+        local config = require("nvim-surround.config")
+        local text = config.get_input("Link text: ") or ""
+        return { { "[" .. text .. "](" }, { ")" } }
+      end,
+      find = function()
+        return require("nvim-surround.config").get_selection({ pattern = "%[.-%]%(.-%)" })
+      end,
+      delete = "^(%[.-%]%()().-(%))()$",
+    },
+    ["l"] = { -- selection becomes the link text, e.g. Vy then Sl -> [text](url)
+      add = function()
+        local config = require("nvim-surround.config")
+        local url = config.get_input("URL: ") or ""
+        return { { "[" }, { "](" .. url .. ")" } }
+      end,
+      find = function()
+        return require("nvim-surround.config").get_selection({ pattern = "%[.-%]%(.-%)" })
+      end,
+      delete = "^(%[)().-(%]%(.-%))()$",
+    },
+  },
+})
+require("nvim-surround-wk").setup()
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
     vim.opt_local.linebreak = true
     vim.opt_local.conceallevel = 2
+  end,
+})
+
+-- continue the comment leader on <Enter> (e.g. aligns " * " in /* */ blocks),
+-- using each filetype's `comments` option for the leader format
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function()
+    vim.opt_local.formatoptions:append("r")
+  end,
+})
+
+-- let gq use Vim's built-in textwidth reflow instead of LSP range-formatting
+-- (conform.nvim + ,lf already handle LSP-based formatting)
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    vim.bo[args.buf].formatexpr = ""
   end,
 })
 
@@ -449,6 +643,7 @@ require("ufo").setup({
 })
 map("n", "zR", require("ufo").openAllFolds, "Open all folds")
 map("n", "zM", require("ufo").closeAllFolds, "Close all folds")
+vim.o.fillchars = "eob: ,fold: ,foldopen:,foldsep: ,foldinner: ,foldclose:"
 
 vim.pack.add({ "https://github.com/monaqa/dial.nvim" }, { confirm = false })
 local augend = require("dial.augend")
@@ -535,12 +730,7 @@ dap.adapters["pwa-node"] = {
   },
 }
 
-vim.pack.add({ "https://github.com/nemanjamalesija/ts-expand-hover.nvim" }, { confirm = false })
-require("ts_expand_hover").setup({ float = { border = "rounded" } })
-
 map("n", ",zz", vim.pack.update, "Update plugins")
 
 -- Machine-local configuration (optional)
-local ok, _ = pcall(require, "local")
-if not ok then
-end
+pcall(require, "local")
