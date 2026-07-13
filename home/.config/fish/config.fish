@@ -54,6 +54,12 @@ abbr -a cd z
 abbr -a v nvim .
 abbr -a g git
 
+abbr -a gs git status
+abbr -a gcm git commit -m
+abbr -a gcam git commit -am
+abbr -a gps git push
+abbr -a gpsf git push --force
+abbr -a gpr git pull --rebase
 abbr -a gco git checkout
 abbr -a gcob git checkout -b
 abbr -a gmaster git fetch origin master:master
