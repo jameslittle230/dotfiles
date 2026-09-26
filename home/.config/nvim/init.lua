@@ -95,11 +95,17 @@ map("n", "<Esc>", "<Cmd>noh<CR>", { desc = "Clear search highlight" })
 
 vim.keymap.set("v", "<Leader>es", "<Cmd>'<,'>sort<CR>", { desc = "Sort selection" })
 
--- vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" }, { confirm = false })
--- require("nightfox").setup({ options = { styles = { comments = "italic" } } })
--- vim.cmd.colorscheme("nightfox")
+-- personal nightfox fork: use the local checkout when present (for live color
+-- tweaking; run :NightfoxCompile after edits), otherwise fetch it from GitHub
+local jil_nightfox = vim.fn.expand("~/Code/jil-nightfox")
+if vim.fn.isdirectory(jil_nightfox) == 1 then
+  vim.opt.rtp:prepend(jil_nightfox)
+else
+  vim.pack.add({ "https://github.com/jameslittle230/jil-nightfox" }, { confirm = false })
+end
+require("nightfox").setup({ options = { styles = { comments = "italic" } } })
+vim.cmd.colorscheme("nightfox")
 vim.pack.add({ "https://git.sr.ht/~p00f/alabaster.nvim" }, { confirm = false })
-vim.cmd.colorscheme("alabaster")
 
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter" }, { confirm = false })
 
@@ -268,7 +274,11 @@ tso("ap", "@parameter.outer", "outer parameter")
 tso("ip", "@parameter.inner", "inner parameter")
 require("treesitter-context").setup({ max_lines = 3, trim_scope = "outer" })
 
-vim.pack.add({ "https://github.com/saghen/blink.cmp" }, { confirm = false })
+vim.pack.add({
+  "https://github.com/saghen/blink.cmp",
+  "https://github.com/saghen/blink.lib",
+}, { confirm = false })
+
 require("blink.cmp").setup({
   cmdline = { enabled = false },
   keymap = { preset = "enter" },
