@@ -93,6 +93,28 @@ end, "Delete other buffers")
 
 map("n", "<Esc>", "<Cmd>noh<CR>", { desc = "Clear search highlight" })
 
+-- directory passed on the command line (e.g. `nvim .`), if any
+local startup_dir = vim.fn.argc() > 0 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
+    and vim.fs.normalize(vim.fn.fnamemodify(vim.fn.argv(0), ":p"))
+  or nil
+
+-- copy the current file's path relative to the startup directory, else the
+-- git root, else home, else /
+vim.api.nvim_create_user_command("CPPath", function()
+  local name = vim.api.nvim_buf_get_name(0)
+  if name == "" then
+    vim.notify("CPPath: buffer has no file", vim.log.levels.WARN)
+    return
+  end
+  local path = vim.fs.normalize(vim.fn.fnamemodify(name, ":p"))
+  local rel = (startup_dir and vim.fs.relpath(startup_dir, path))
+    or (vim.fs.root(path, ".git") and vim.fs.relpath(vim.fs.root(path, ".git"), path))
+    or vim.fs.relpath(vim.fs.normalize("~"), path)
+    or vim.fs.relpath("/", path)
+  vim.fn.setreg("+", rel)
+  vim.api.nvim_echo({ { rel } }, false, {})
+end, { desc = "Copy relative file path to clipboard" })
+
 vim.keymap.set("v", "<Leader>es", "<Cmd>'<,'>sort<CR>", { desc = "Sort selection" })
 
 -- personal nightfox fork: use the local checkout when present (for live color
