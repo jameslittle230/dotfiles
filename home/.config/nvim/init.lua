@@ -295,6 +295,15 @@ tso("ap", "@parameter.outer", "outer parameter")
 tso("ip", "@parameter.inner", "inner parameter")
 require("treesitter-context").setup({ max_lines = 3, trim_scope = "outer" })
 
+-- expand/shrink visual selection by one treesitter AST node (same engine behind the
+-- builtin `an`/`in` textobjects, just bound to Tab for faster repeated presses)
+map("x", "<Tab>", function()
+  require("vim.treesitter._select").select_parent(vim.v.count1)
+end, "Expand selection by one AST node")
+map("x", "<S-Tab>", function()
+  require("vim.treesitter._select").select_child(vim.v.count1)
+end, "Shrink selection by one AST node")
+
 vim.pack.add({
   "https://github.com/saghen/blink.cmp",
   "https://github.com/saghen/blink.lib",
