@@ -127,7 +127,6 @@ else
 end
 require("nightfox").setup({ options = { styles = { comments = "italic" } } })
 vim.cmd.colorscheme("nightfox")
-vim.pack.add({ "https://git.sr.ht/~p00f/alabaster.nvim" }, { confirm = false })
 
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter" }, { confirm = false })
 
