@@ -130,6 +130,31 @@ vim.cmd.colorscheme("nightfox")
 
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter" }, { confirm = false })
 
+-- nvim-treesitter reloads its parser registry on install/update.
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TSUpdate",
+  callback = function()
+    local parsers = require("nvim-treesitter.parsers")
+    for language, directory in pairs({
+      markdoc = "tree-sitter-markdoc",
+      markdoc_inline = "tree-sitter-markdoc-inline",
+    }) do
+      parsers[language] = {
+        install_info = {
+          url = "https://github.com/jil-stripe/treesitter-markdoc",
+          revision = "ffb9468a5afed361e60ee04fbcf2bf15a1f46f83",
+          location = directory,
+          queries = directory .. "/queries",
+        },
+      }
+    end
+    parsers.markdoc.requires = { "markdoc_inline" }
+  end,
+})
+
+-- Use Markdoc syntax for .md files while retaining Markdown filetype settings.
+vim.treesitter.language.register("markdoc", "markdown")
+
 local function treesitter_try_attach(buf, language)
   if not vim.treesitter.language.add(language) then
     return
@@ -140,7 +165,17 @@ end
 
 local available_parsers = require("nvim-treesitter").get_available()
 
-local ensure_ts_installed = { "bash", "json", "lua", "markdown", "markdown_inline", "python", "yaml" }
+local ensure_ts_installed = {
+  "bash",
+  "json",
+  "lua",
+  "markdoc",
+  "markdoc_inline",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "yaml",
+}
 do
   local installed = require("nvim-treesitter").get_installed("parsers")
   for _, lang in ipairs(ensure_ts_installed) do
