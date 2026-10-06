@@ -17,7 +17,7 @@ During active editing sessions, `dev.sh` can be run instead — it watches git-t
 | Tool | File |
 |------|------|
 | Fish shell | `home/.config/fish/config.fish` |
-| Neovim | `home/.config/nvim/init.lua` |
+| Neovim | `home/.config/nvim/init.lua` (shared), `home/.config/nvim/lua/platform.lua` (all laptops) |
 | Starship prompt | `home/.config/starship.toml` |
 | Git | `home/.gitconfig`, `home/.gitconfig.user`, `home/.gitignore`, `home/.git-commit-template` |
 | AeroSpace (window manager) | `home/.aerospace.toml` |
@@ -27,6 +27,8 @@ During active editing sessions, `dev.sh` can be run instead — it watches git-t
 ## Machine-local overrides
 
 Fish shell sources `~/.config/fish/config.local.fish` if it exists. Machine-specific Fish config (env vars, paths, secrets) belongs there — it is not tracked in this repo.
+
+Neovim's `init.lua` is shared with another dotfiles repo, so it must stay generic; put laptop-only Neovim config in `lua/platform.lua`. Neovim loads `home/.config/nvim/lua/local.lua` last if it exists. It is gitignored, so machine-specific Neovim config belongs there.
 
 ## Adding new tools
 

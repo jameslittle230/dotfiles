@@ -1,3 +1,8 @@
+-- Config layers: this file is shared, lua/platform.lua (tracked) holds settings
+-- for this kind of machine, and lua/local.lua (gitignored, optional) holds
+-- per-machine overrides.
+local platform = require("platform")
+
 vim.g.mapleader = "," -- set leader key to comma
 vim.g.maplocalleader = "," -- set local leader key to comma
 
@@ -656,14 +661,11 @@ end, {
   desc = "Re-enable autoformat-on-save",
 })
 
-local lsp_servers = {
+local lsp_servers = vim.tbl_extend("error", {
   lua_ls = {
     Lua = { workspace = { library = vim.api.nvim_get_runtime_file("lua", true) } },
   },
-  clangd = {},
-  rust_analyzer = {},
-  ts_ls = {},
-}
+}, platform.lsp_servers or {})
 
 vim.pack.add({
   "https://github.com/neovim/nvim-lspconfig", -- default configs for lsps
@@ -807,5 +809,11 @@ dap.adapters["pwa-node"] = {
 
 map("n", ",zz", vim.pack.update, "Update plugins")
 
--- Machine-local configuration (optional)
-pcall(require, "local")
+if platform.setup then
+  platform.setup()
+end
+
+-- Per-machine overrides (gitignored). Checked for explicitly so errors in it still surface.
+if vim.uv.fs_stat(vim.fn.stdpath("config") .. "/lua/local.lua") then
+  require("local")
+end

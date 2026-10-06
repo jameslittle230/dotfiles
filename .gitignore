@@ -1,1 +1,4 @@
 .claude
+
+# Per-machine Neovim overrides
+home/.config/nvim/lua/local.lua
