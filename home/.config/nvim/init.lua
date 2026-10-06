@@ -99,7 +99,8 @@ end, "Delete other buffers")
 map("n", "<Esc>", "<Cmd>noh<CR>", { desc = "Clear search highlight" })
 
 -- directory passed on the command line (e.g. `nvim .`), if any
-local startup_dir = vim.fn.argc() > 0 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
+local startup_dir = vim.fn.argc() > 0
+    and vim.fn.isdirectory(vim.fn.argv(0)) == 1
     and vim.fs.normalize(vim.fn.fnamemodify(vim.fn.argv(0), ":p"))
   or nil
 
@@ -159,6 +160,7 @@ vim.api.nvim_create_autocmd("User", {
 
 -- Use Markdoc syntax for .md files while retaining Markdown filetype settings.
 vim.treesitter.language.register("markdoc", "markdown")
+vim.filetype.add({ extension = { markdoc = "markdoc", mdoc = "markdoc" } })
 
 local function treesitter_try_attach(buf, language)
   if not vim.treesitter.language.add(language) then
@@ -683,6 +685,34 @@ require("mason-tool-installer").setup({
 for server, config in pairs(lsp_servers) do
   vim.lsp.config(server, { settings = config })
 end
+
+-- Markdoc language server, built from my fork.
+vim.api.nvim_create_autocmd("PackChanged", {
+  callback = function(ev)
+    local name, kind = ev.data.spec.name, ev.data.kind
+    if name == "markdoc-language-server" and (kind == "install" or kind == "update") then
+      vim.notify("Building markdoc-language-server...")
+      local build = "npm ci && (cd server && npm ci) && (cd client && npm ci) && npm run build"
+      vim.system({ "sh", "-c", build }, { cwd = ev.data.path }, function(result)
+        vim.schedule(function()
+          if result.code == 0 then
+            vim.notify("Built markdoc-language-server; reopen Markdoc files to attach")
+          else
+            vim.notify("markdoc-language-server build failed:\n" .. result.stderr, vim.log.levels.ERROR)
+          end
+        end)
+      end)
+    end
+  end,
+})
+vim.pack.add({ "https://github.com/jil-stripe/markdoc-language-server" }, { confirm = false })
+
+-- Not enabled here: lua/platform.lua or lua/local.lua adds a root_dir and
+-- initialization options for the projects that use it, then enables it.
+vim.lsp.config("markdoc_ls", {
+  cmd = { "node", vim.pack.get({ "markdoc-language-server" })[1].path .. "/dist/server/wrapper.js", "--stdio" },
+  filetypes = { "markdown", "markdoc" },
+})
 
 map("n", ",lf", function()
   local names = vim.tbl_map(function(f)
