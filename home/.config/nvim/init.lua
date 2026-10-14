@@ -111,8 +111,6 @@ vim.api.nvim_create_user_command("CPPath", function()
   vim.api.nvim_echo({ { rel } }, false, {})
 end, { desc = "Copy relative file path to clipboard" })
 
-vim.keymap.set("v", "<Leader>es", "<Cmd>'<,'>sort<CR>", { desc = "Sort selection" })
-
 -- personal nightfox fork: use the local checkout when present (for live color
 -- tweaking; run :NightfoxCompile after edits), otherwise fetch it from GitHub
 local jil_nightfox = vim.fn.expand("~/Code/jil-nightfox")
