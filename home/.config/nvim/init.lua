@@ -65,7 +65,7 @@ map("n", "<C-S-l>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Wid
 
 map("n", "[p", '<Cmd>exe "put! " . v:register<CR>', "Paste Above")
 map("n", "]p", '<Cmd>exe "put "  . v:register<CR>', "Paste Below")
-map("x", "p", '"_dP', { desc = "Paste without yanking" })
+map("x", "p", "P", { desc = "Paste without yanking" })
 
 map("n", "D", '"_D', { desc = "Delete to end of line without yanking" })
 map("n", "X", '"_X', { desc = "Delete char before cursor without yanking" })
