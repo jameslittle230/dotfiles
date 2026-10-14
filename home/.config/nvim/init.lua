@@ -655,6 +655,12 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.api.nvim_create_autocmd("TextYankPost", {
+  callback = function()
+    vim.hl.on_yank()
+  end,
+})
+
 -- continue the comment leader on <Enter> (e.g. aligns " * " in /* */ blocks),
 -- using each filetype's `comments` option for the leader format
 vim.api.nvim_create_autocmd("FileType", {
