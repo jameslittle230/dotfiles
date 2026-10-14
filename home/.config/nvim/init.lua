@@ -148,7 +148,7 @@ vim.api.nvim_create_autocmd("User", {
 
 -- Use Markdoc syntax for .md files while retaining Markdown filetype settings.
 vim.treesitter.language.register("markdoc", "markdown")
-vim.filetype.add({ extension = { markdoc = "markdoc", mdoc = "markdoc" } })
+vim.filetype.add({ extension = { markdoc = "markdoc", mdoc = "markdoc", mdx = "markdoc" } })
 
 local function treesitter_try_attach(buf, language)
   if not vim.treesitter.language.add(language) then
@@ -644,10 +644,14 @@ require("nvim-surround").setup({
 require("nvim-surround-wk").setup()
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+  pattern = { "markdown", "markdoc" },
   callback = function()
     vim.opt_local.linebreak = true
     vim.opt_local.conceallevel = 2
+    vim.opt_local.spell = true
+    -- soft-wrap prose instead of hard-wrapping it while typing (`c` covers list
+    -- items and blockquotes, which 'comments' treats as comment leaders)
+    vim.opt_local.formatoptions:remove("tc")
   end,
 })
 
