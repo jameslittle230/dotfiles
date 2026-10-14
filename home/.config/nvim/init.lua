@@ -213,13 +213,11 @@ vim.pack.add({
   "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
   "https://github.com/nvim-treesitter/nvim-treesitter-context",
   "https://github.com/windwp/nvim-ts-autotag",
-  "https://github.com/folke/ts-comments.nvim",
-  "https://github.com/numToStr/Comment.nvim",
+  "https://github.com/folke/ts-comments.nvim", -- per-language commentstrings for the builtin gc
 }, { confirm = false })
 require("nvim-treesitter-textobjects").setup({})
 require("nvim-ts-autotag").setup()
 require("ts-comments").setup()
-require("Comment").setup()
 
 -- wrap `text` into a comment, reflowed to 'textwidth'. For block-style
 -- commentstrings (e.g. "/* %s */") this produces a /* ... */ block with
