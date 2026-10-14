@@ -316,6 +316,69 @@ tso("ac", "@comment.outer", "outer comment")
 tso("ic", "@comment.inner", "inner comment")
 tso("ap", "@parameter.outer", "outer parameter")
 tso("ip", "@parameter.inner", "inner parameter")
+
+-- key/value entries (JS/TS objects, JSON, YAML, TOML, Lua tables, Python dicts
+-- and kwargs) and JSX/HTML attributes, using the @entry/@key/@value captures in
+-- after/queries. Key and value come from the innermost entry around the cursor,
+-- so `civ` works with the cursor on the key and `cik` with it on the value
+local function select_entry_part(capture)
+  local ok, parser = pcall(vim.treesitter.get_parser, 0, nil, { error = false })
+  if not ok or not parser then
+    return
+  end
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  row = row - 1
+  parser:parse({ row, row + 1 })
+  local ltree = parser:language_for_range({ row, col, row, col })
+  local query = vim.treesitter.query.get(ltree:lang(), "textobjects")
+  if not query then
+    return
+  end
+
+  local best, best_size
+  for _, tree in ipairs(ltree:trees()) do
+    for _, match in query:iter_matches(tree:root(), 0, row, row + 1) do
+      local nodes = {}
+      for id, matched in pairs(match) do
+        nodes[query.captures[id]] = matched[#matched]
+      end
+      local entry, target = nodes["entry.outer"], nodes[capture]
+      if entry and target and vim.treesitter.is_in_node_range(entry, row, col) then
+        local _, _, start_byte = entry:start()
+        local _, _, end_byte = entry:end_()
+        if not best_size or end_byte - start_byte < best_size then
+          best, best_size = target, end_byte - start_byte
+        end
+      end
+    end
+  end
+  if not best then
+    return
+  end
+
+  local sr, sc, er, ec = best:range()
+  if ec == 0 then -- node ends at the start of a line: select up to the previous line's end
+    er = er - 1
+    ec = #vim.fn.getline(er + 1)
+  end
+  if vim.fn.mode():match("[vV\22]") then
+    vim.cmd("normal! \27")
+  end
+  vim.api.nvim_win_set_cursor(0, { sr + 1, sc })
+  vim.cmd("normal! v")
+  vim.api.nvim_win_set_cursor(0, { er + 1, math.max(ec - 1, 0) })
+end
+for _, obj in ipairs({
+  { "k", "key.outer", "key" },
+  { "v", "value.outer", "value" },
+  { "e", "entry.outer", "key/value entry" },
+}) do
+  for _, prefix in ipairs({ "a", "i" }) do
+    map({ "x", "o" }, prefix .. obj[1], function()
+      select_entry_part(obj[2])
+    end, obj[3])
+  end
+end
 require("treesitter-context").setup({ max_lines = 3, trim_scope = "outer" })
 
 -- expand/shrink visual selection by one treesitter AST node (same engine behind the
