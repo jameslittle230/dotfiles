@@ -533,13 +533,30 @@ vim.api.nvim_create_autocmd({ "BufAdd", "BufEnter" }, {
 
 require("mini.tabline").setup()
 require("mini.splitjoin").setup()
-require("mini.bracketed").setup()
-map("n", "]]", function()
-  require("mini.bracketed").buffer("forward")
-end, "Next buffer")
-map("n", "[[", function()
-  require("mini.bracketed").buffer("backward")
-end, "Previous buffer")
+-- no comment target: it would take over ]c/[c, which jump between diff changes
+require("mini.bracketed").setup({ comment = { suffix = "" } })
+
+-- ]]/[[ cycle buffers. Several ftplugins (markdown, python, rust, go, ...) map
+-- them buffer-locally after FileType autocmds run, so set them per buffer once
+-- the ftplugin is done
+local function map_buffer_cycle(buf)
+  map("n", "]]", function()
+    require("mini.bracketed").buffer("forward")
+  end, { buffer = buf, desc = "Next buffer" })
+  map("n", "[[", function()
+    require("mini.bracketed").buffer("backward")
+  end, { buffer = buf, desc = "Previous buffer" })
+end
+map_buffer_cycle(0)
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function(args)
+    vim.schedule(function()
+      if vim.api.nvim_buf_is_valid(args.buf) then
+        map_buffer_cycle(args.buf)
+      end
+    end)
+  end,
+})
 require("mini.move").setup({
   mappings = {
     left = "<S-h>",
