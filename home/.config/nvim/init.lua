@@ -467,7 +467,7 @@ require("lualine").setup({
     lualine_b = { { "branch", icons_enabled = false }, "diff", "diagnostics" },
     lualine_c = { { "filename", path = 1 } },
     lualine_x = {
-      { "lsp_status", ignore_lsp = { "null-ls" } },
+      "lsp_status",
       {
         function()
           local buf = vim.api.nvim_get_current_buf()
@@ -483,9 +483,6 @@ require("lualine").setup({
     lualine_z = { "location" },
   },
 })
-
-vim.pack.add({ "https://git.sr.ht/~whynothugo/lsp_lines.nvim" }, { confirm = false })
-require("lsp_lines").setup()
 
 vim.diagnostic.config({
   signs = {
