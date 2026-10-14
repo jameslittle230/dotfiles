@@ -160,7 +160,10 @@ end
 
 local available_parsers = require("nvim-treesitter").get_available()
 
-local ensure_ts_installed = {
+-- the FileType autocmd below installs a buffer's own parser on demand; these
+-- are preinstalled because they also appear as injections (e.g. code fences in
+-- docs), which never trigger it. install() skips parsers already installed
+require("nvim-treesitter").install({
   "bash",
   "json",
   "lua",
@@ -170,15 +173,7 @@ local ensure_ts_installed = {
   "markdown_inline",
   "python",
   "yaml",
-}
-do
-  local installed = require("nvim-treesitter").get_installed("parsers")
-  for _, lang in ipairs(ensure_ts_installed) do
-    if not vim.tbl_contains(installed, lang) then
-      require("nvim-treesitter").install(lang)
-    end
-  end
-end
+})
 
 vim.api.nvim_create_autocmd("FileType", {
   callback = function(args)
