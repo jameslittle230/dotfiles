@@ -443,6 +443,19 @@ map("n", ",sr", "<Cmd>FzfLua resume<CR>", "Resume last search")
 map("n", ",ss", "<Cmd>FzfLua lsp_document_symbols<CR>", "Document symbols")
 map("n", ",sS", "<Cmd>FzfLua lsp_workspace_symbols<CR>", "Workspace symbols")
 
+-- `nvim <dir>`: open the file picker in that directory instead of an empty
+-- directory buffer
+if startup_dir then
+  vim.api.nvim_create_autocmd("VimEnter", {
+    once = true,
+    callback = function()
+      vim.schedule(function()
+        require("fzf-lua").files({ cwd = startup_dir })
+      end)
+    end,
+  })
+end
+
 vim.pack.add({ "https://github.com/nvim-lualine/lualine.nvim" }, { confirm = false })
 require("lualine").setup({
   options = {
