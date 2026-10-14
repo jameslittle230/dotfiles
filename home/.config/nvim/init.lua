@@ -692,7 +692,7 @@ map("n", "]g", "<Cmd>Gitsigns next_hunk<CR>", "Previous hunk")
 
 vim.pack.add({ "https://github.com/stevearc/conform.nvim" }, { confirm = false })
 require("conform").setup({
-  formatters_by_ft = {
+  formatters_by_ft = vim.tbl_extend("error", {
     javascript = { "prettierd", "prettier", stop_after_first = true },
     typescript = { "prettierd", "prettier", stop_after_first = true },
     javascriptreact = { "prettierd", "prettier", stop_after_first = true },
@@ -705,12 +705,12 @@ require("conform").setup({
     rust = { "rustfmt", lsp_format = "fallback" },
     bash = { "shfmt", lsp_format = "fallback" },
     ["_"] = { "trim_whitespace" },
-  },
-  formatters = {
+  }, platform.formatters_by_ft or {}),
+  formatters = vim.tbl_extend("error", {
     stylua = {
       prepend_args = { "--indent-type", "Spaces", "--indent-width", "2", "--column-width", "120" },
     },
-  },
+  }, platform.formatters or {}),
   format_on_save = function(bufnr)
     if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
       return
