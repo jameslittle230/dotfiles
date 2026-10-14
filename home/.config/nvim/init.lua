@@ -8,24 +8,18 @@ vim.g.maplocalleader = "," -- set local leader key to comma
 
 vim.g.loaded_netrw = 1 -- disable built-in file explorer netrw
 vim.g.loaded_netrwPlugin = 1 -- disable netrw plugin
-vim.o.autoread = true -- reload files changed outside of neovim
 vim.o.breakindent = true -- wrapped lines continue visually indented
 vim.o.clipboard = "unnamedplus" -- use system clipboard for yank/paste
 vim.o.expandtab = true -- insert spaces instead of tabs
-vim.o.history = 1000 -- number of commands to keep in history
-vim.o.hlsearch = true -- highlight all search matches
 vim.o.ignorecase = true -- ignore case when searching
 vim.o.inccommand = "split" -- preview substitutions live in a split
-vim.o.laststatus = 2 -- always show the status line
 vim.o.list = true -- show invisible characters
 vim.opt.listchars = { trail = "·", nbsp = "␣" } -- symbols for invisible characters
 vim.o.mouse = "a" -- enable mouse support in all modes
 vim.o.number = true -- show absolute line numbers
 vim.o.relativenumber = true -- show relative line numbers
-vim.o.ruler = true -- show cursor position in status line
 vim.o.scrolloff = 8 -- keep 8 lines visible above/below cursor
 vim.o.shiftwidth = 2 -- spaces to use for each indent step
-vim.o.showcmd = true -- show partial command in status line
 vim.o.showmode = false -- don't show mode (e.g. -- INSERT --) in command line
 vim.o.signcolumn = "yes" -- always show the sign column (prevents layout shift)
 vim.o.smartcase = true -- case-sensitive search if pattern has uppercase
@@ -35,16 +29,12 @@ vim.o.tabstop = 2 -- number of spaces a tab character counts for
 vim.o.textwidth = 80 -- wrap text at 80 characters
 vim.o.colorcolumn = "+1" -- visual guide at textwidth+1
 vim.o.undofile = true -- persist undo history across sessions
-vim.o.undolevels = 1000 -- maximum number of undo steps
-vim.o.updatetime = 50 -- ms of inactivity before writing swap file (affects CursorHold)
-vim.o.wrap = true -- wrap long lines visually
 vim.o.winborder = "rounded"
 vim.o.foldcolumn = "1" -- show fold indicators in the sign column
 vim.o.foldlevel = 99 -- open all folds by default
 vim.o.foldlevelstart = 99 -- open all folds when opening a file
-vim.o.foldenable = true -- enable folding
 
--- vendored locally under pack/*/opt — not managed via vim.pack
+-- optional plugins that ship with Neovim
 vim.cmd("packadd nvim.difftool")
 vim.cmd("packadd nvim.undotree")
 
